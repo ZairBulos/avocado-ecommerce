@@ -28,7 +28,7 @@ public class ItemAttributes extends Base {
     @Column(name = "hardiness", nullable = false)
     private Integer hardiness;
 
-    @ManyToOne(optional = false)
+    @OneToOne(optional = false)
     @JoinColumn(name = "item_id")
     private Item item;
 }
