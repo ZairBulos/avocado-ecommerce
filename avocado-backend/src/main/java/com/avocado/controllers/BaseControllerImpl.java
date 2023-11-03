@@ -1,19 +1,19 @@
 package com.avocado.controllers;
 
+import com.avocado.dtos.BaseDTO;
 import com.avocado.entities.Base;
-import com.avocado.services.impl.BaseServiceImpl;
+import com.avocado.services.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 
-public abstract class BaseControllerImpl<E extends Base, S extends BaseServiceImpl<E, Long>> implements BaseController<E, Long> {
+public abstract class BaseControllerImpl<E extends Base, D extends BaseDTO> implements BaseController<E, D, Long> {
 
     @Autowired
-    protected S service;
+    protected BaseService<E, D, Long> service;
 
     @Override
     @GetMapping("")
@@ -27,10 +27,21 @@ public abstract class BaseControllerImpl<E extends Base, S extends BaseServiceIm
         }
     }
 
+    @Override
+    @GetMapping("/paged")
+    public ResponseEntity<?> getAll(@PageableDefault(page = 0, size = 4) Pageable pageable) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(service.findAll(pageable));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"error\": \"something went wrong\"}");
+        }
+    }
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOne(Long id) {
+    public ResponseEntity<?> getOne(@PathVariable Long id) {
         try {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findById(id));
@@ -42,10 +53,10 @@ public abstract class BaseControllerImpl<E extends Base, S extends BaseServiceIm
 
     @Override
     @PostMapping("")
-    public ResponseEntity<?> save(E entity) {
+    public ResponseEntity<?> save(@RequestBody D dto) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(service.save(entity));
+                    .body(service.save(dto));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("{\"error\": \"something went wrong\"}");
@@ -54,10 +65,10 @@ public abstract class BaseControllerImpl<E extends Base, S extends BaseServiceIm
 
     @Override
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(Long id, E entity) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody D dto) {
         try {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(service.update(id, entity));
+                    .body(service.update(id, dto));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("{\"error\": \"something went wrong\"}");
@@ -66,7 +77,7 @@ public abstract class BaseControllerImpl<E extends Base, S extends BaseServiceIm
 
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
             service.delete(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT)

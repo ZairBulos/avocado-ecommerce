@@ -1,35 +1,58 @@
 package com.avocado.services.impl;
 
+import com.avocado.dtos.BaseDTO;
 import com.avocado.entities.Base;
+import com.avocado.mappers.BaseMapper;
 import com.avocado.repositories.BaseRepository;
 import com.avocado.services.BaseService;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class BaseServiceImpl<E extends Base, ID extends Serializable> implements BaseService<E, ID> {
+public abstract class BaseServiceImpl<E extends Base, D extends BaseDTO, ID extends Serializable> implements BaseService<E, D, ID> {
 
     protected BaseRepository<E, ID> baseRepository;
+    protected BaseMapper<E, D> baseMapper;
 
-    public BaseServiceImpl(BaseRepository<E, ID> baseRepository) {
+    public BaseServiceImpl(BaseRepository<E, ID> baseRepository, BaseMapper<E, D> baseMapper) {
         this.baseRepository = baseRepository;
+        this.baseMapper = baseMapper;
     }
 
     @Override
-    public List<E> findAll() throws Exception {
+    public List<D> findAll() throws Exception {
         try {
-            return baseRepository.findAll();
+            List<E> entities = baseRepository.findAll();
+            return baseMapper.toDTOsList(entities);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
     @Override
-    public E findById(ID id) throws Exception {
+    public Page<E> findAll(Pageable pageable) throws Exception {
         try {
-            return baseRepository.findById(id).get();
+            return baseRepository.findAll(pageable);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public D findById(ID id) throws Exception {
+        try {
+            Optional<E> optional = baseRepository.findById(id);
+
+            if (optional.isEmpty()) {
+                throw new Exception("Entity not found");
+            }
+
+            E entity = optional.get();
+            return baseMapper.toDTO(entity);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -37,8 +60,9 @@ public abstract class BaseServiceImpl<E extends Base, ID extends Serializable> i
 
     @Override
     @Transactional
-    public E save(E entity) throws Exception {
+    public E save(D dto) throws Exception {
         try {
+            E entity = baseMapper.toEntity(dto);
             return baseRepository.save(entity);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -47,14 +71,15 @@ public abstract class BaseServiceImpl<E extends Base, ID extends Serializable> i
 
     @Override
     @Transactional
-    public E update(ID id, E entity) throws Exception {
+    public E update(ID id, D dto) throws Exception {
         try {
             Optional<E> optional = baseRepository.findById(id);
 
             if (optional.isEmpty()) {
-                throw new Exception("Entity not founded");
+                throw new Exception("Entity not found");
             }
 
+            E entity = baseMapper.toEntity(dto);
             return baseRepository.save(entity);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -68,7 +93,7 @@ public abstract class BaseServiceImpl<E extends Base, ID extends Serializable> i
             Optional<E> optional = baseRepository.findById(id);
 
             if (optional.isEmpty()) {
-                throw new Exception("Entity not founded");
+                throw new Exception("Entity not found");
             }
 
             baseRepository.deleteById(id);
