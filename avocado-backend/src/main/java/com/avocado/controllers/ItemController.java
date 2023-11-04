@@ -22,7 +22,7 @@ public class ItemController extends BaseControllerImpl<Item, ItemDTO> {
     public ResponseEntity<?> getAll(@PageableDefault(page = 0, size = 4) Pageable pageable) {
         try {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(service.findAllUnlocked(pageable));
+                    .body(service.findAllPaged(pageable));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("{\"error\": \"something went wrong\"}");
@@ -34,6 +34,17 @@ public class ItemController extends BaseControllerImpl<Item, ItemDTO> {
         try {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findAllUnlocked());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"error\": \"something went wrong\"}");
+        }
+    }
+
+    @GetMapping("/unlocked/paged")
+    public ResponseEntity<?> getAllUnlocked(@PageableDefault(page = 0, size = 4) Pageable pageable) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(service.findAllUnlocked(pageable));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("{\"error\": \"something went wrong\"}");

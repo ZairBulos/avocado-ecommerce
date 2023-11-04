@@ -73,6 +73,34 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
     }
 
     @Override
+    public Page<ItemDTO> findAllPaged(Pageable pageable) throws Exception {
+        try {
+            Page<Item> pageables = itemRepository.findAll(pageable);
+            List<ItemDTO> dtos = new ArrayList<>();
+
+            for (Item item : pageables) {
+                ItemDTO dto = itemMapper.toDTO(item);
+
+                ItemImage image = itemImageRepository.findByItem_Id(item.getId());
+                Integer currentStock = itemStockRepository.findCurrentStockByItemId(item.getId());
+                Double sellPrice = itemSellPriceRepository.findLastSellPriceByItemId(item.getId());
+                ItemAttributes attributes = itemAttributesRepository.findByItem_Id(item.getId());
+
+                dto.setImage(image.getImage());
+                dto.setSellPrice(sellPrice);
+                dto.setCurrentStock(currentStock);
+                dto.setAttributes(itemAttributesMapper.toDTO(attributes));
+
+                dtos.add(dto);
+            }
+
+            return new PageImpl<>(dtos, pageable, pageables.getTotalElements());
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
     public List<ItemDTO> findAllUnlocked() throws Exception {
         try {
             List<Item> entities = itemRepository.findAllByBlockedFalse();
