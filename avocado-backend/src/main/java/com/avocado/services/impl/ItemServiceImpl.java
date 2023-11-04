@@ -2,7 +2,9 @@ package com.avocado.services.impl;
 
 import com.avocado.dtos.ItemDTO;
 import com.avocado.entities.Item;
+import com.avocado.entities.ItemAttributes;
 import com.avocado.mappers.BaseMapper;
+import com.avocado.mappers.ItemAttributesMapper;
 import com.avocado.mappers.ItemMapper;
 import com.avocado.repositories.*;
 import com.avocado.services.ItemService;
@@ -31,7 +33,12 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
     @Autowired
     private ItemSellPriceRepository itemSellPriceRepository;
 
+    @Autowired
+    private ItemAttributesRepository itemAttributesRepository;
+
     private final ItemMapper itemMapper = ItemMapper.getInstance();
+
+    private final ItemAttributesMapper itemAttributesMapper = ItemAttributesMapper.getInstance();
 
     public ItemServiceImpl(BaseRepository<Item, Long> baseRepository, BaseMapper<Item, ItemDTO> baseMapper) {
         super(baseRepository, baseMapper);
@@ -49,10 +56,12 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
                 List<String> images = itemImageRepository.findAllImagesByItemId(item.getId());
                 Integer currentStock = itemStockRepository.findCurrentStockByItemId(item.getId());
                 Double sellPrice = itemSellPriceRepository.findLastSellPriceByItemId(item.getId());
+                ItemAttributes attributes = itemAttributesRepository.findByItem_Id(item.getId());
 
                 dto.setImages(images);
                 dto.setSellPrice(sellPrice);
                 dto.setCurrentStock(currentStock);
+                dto.setAttributes(itemAttributesMapper.toDTO(attributes));
 
                 dtos.add(dto);
             }
@@ -75,10 +84,12 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
                 List<String> images = itemImageRepository.findAllImagesByItemId(item.getId());
                 Integer currentStock = itemStockRepository.findCurrentStockByItemId(item.getId());
                 Double sellPrice = itemSellPriceRepository.findLastSellPriceByItemId(item.getId());
+                ItemAttributes attributes = itemAttributesRepository.findByItem_Id(item.getId());
 
                 dto.setImages(images);
                 dto.setSellPrice(sellPrice);
                 dto.setCurrentStock(currentStock);
+                dto.setAttributes(itemAttributesMapper.toDTO(attributes));
 
                 dtos.add(dto);
             }
@@ -101,10 +112,12 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
                 List<String> images = itemImageRepository.findAllImagesByItemId(item.getId());
                 Integer currentStock = itemStockRepository.findCurrentStockByItemId(item.getId());
                 Double sellPrice = itemSellPriceRepository.findLastSellPriceByItemId(item.getId());
+                ItemAttributes attributes = itemAttributesRepository.findByItem_Id(item.getId());
 
                 dto.setImages(images);
                 dto.setSellPrice(sellPrice);
                 dto.setCurrentStock(currentStock);
+                dto.setAttributes(itemAttributesMapper.toDTO(attributes));
 
                 dtos.add(dto);
             }
@@ -129,10 +142,13 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
             List<String> images = itemImageRepository.findAllImagesByItemId(id);
             Integer currentStock = itemStockRepository.findCurrentStockByItemId(id);
             Double sellPrice = itemSellPriceRepository.findLastSellPriceByItemId(id);
+            ItemAttributes attributes = itemAttributesRepository.findByItem_Id(id);
 
             dto.setImages(images);
             dto.setSellPrice(sellPrice);
             dto.setCurrentStock(currentStock);
+            dto.setAttributes(itemAttributesMapper.toDTO(attributes));
+
 
             return dto;
         } catch (Exception e) {
