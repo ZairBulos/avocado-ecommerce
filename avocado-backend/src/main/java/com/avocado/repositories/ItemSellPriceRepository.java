@@ -10,4 +10,6 @@ public interface ItemSellPriceRepository extends BaseRepository<ItemSellPrice, L
 
     @Query("SELECT i.sellPrice FROM ItemSellPrice i WHERE i.item.id = :itemId ORDER BY i.sellPriceDate DESC LIMIT 1")
     Double findLastSellPriceByItemId(@Param("itemId") Long itemId);
+
+    void deleteAllByItem_Id(@Param("itemId") Long itemId);
 }

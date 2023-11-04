@@ -10,4 +10,6 @@ public interface ItemStockRepository extends BaseRepository<ItemStock, Long> {
 
     @Query("SELECT i.currentStock FROM ItemStock i WHERE i.item.id = :itemId ORDER BY i.currentStockDate DESC LIMIT 1")
     Integer findCurrentStockByItemId(@Param("itemId") Long itemId);
+
+    void deleteAllByItem_Id(@Param("itemId") Long itemId);
 }

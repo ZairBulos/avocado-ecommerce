@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface ItemAttributesRepository extends BaseRepository<ItemAttributes, Long> {
 
     ItemAttributes findByItem_Id(@Param("itemId") Long itemId);
+
+    void deleteByItem_Id(@Param("itemId") Long itemId);
 }
