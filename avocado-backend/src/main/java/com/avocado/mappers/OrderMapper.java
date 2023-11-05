@@ -17,4 +17,8 @@ public interface OrderMapper extends BaseMapper<Order, OrderDTO> {
     @Mapping(target = "userId", source = "source.user.id")
     @Mapping(target = "userEmail", source = "source.user.email")
     OrderDTO toDTO(Order source);
+
+    @Override
+    @Mapping(target = "user.id", source = "source.userId")
+    Order toEntity(OrderDTO source);
 }

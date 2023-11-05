@@ -1,15 +1,17 @@
 package com.avocado.services.impl;
 
 import com.avocado.dtos.OrderDTO;
+import com.avocado.dtos.OrderDetailDTO;
+import com.avocado.entities.Item;
+import com.avocado.entities.ItemStock;
 import com.avocado.entities.Order;
 import com.avocado.entities.OrderDetail;
 import com.avocado.mappers.BaseMapper;
 import com.avocado.mappers.OrderDetailMapper;
 import com.avocado.mappers.OrderMapper;
-import com.avocado.repositories.BaseRepository;
-import com.avocado.repositories.OrderDetailRepository;
-import com.avocado.repositories.OrderRepository;
+import com.avocado.repositories.*;
 import com.avocado.services.OrderService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,6 +29,12 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, OrderDTO, Long> imp
 
     @Autowired
     private OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    private ItemRepository itemRepository;
+
+    @Autowired
+    private ItemStockRepository itemStockRepository;
 
     private final OrderMapper orderMapper = OrderMapper.getInstance();
 
@@ -151,6 +159,39 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, OrderDTO, Long> imp
             dto.setOrderDetails(orderDetailMapper.toDTOsList(orderDetails));
 
             return dto;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public Order save(OrderDTO dto) throws Exception {
+        try {
+            Order order = orderRepository.save(orderMapper.toEntity(dto));
+
+            // Details
+            List<OrderDetail> orderDetails = orderDetailMapper.toEntitiesList(dto.getOrderDetails());
+            for (OrderDetail orderDetail : orderDetails) {
+                orderDetail.setOrder(order);
+            }
+            orderDetailRepository.saveAll(orderDetails);
+
+            // Subtract Stock
+            for (OrderDetailDTO orderDetailDTO : dto.getOrderDetails()) {
+                ItemStock itemStock = new ItemStock();
+
+                Item item = itemRepository.findById(orderDetailDTO.getItemId()).get();
+                Integer latestStock = itemStockRepository.findCurrentStockByItemId(orderDetailDTO.getItemId());
+                Integer currentStock = latestStock - orderDetailDTO.getQuantity();
+
+                itemStock.setCurrentStock(currentStock);
+                itemStock.setItem(item);
+
+                itemStockRepository.save(itemStock);
+            }
+
+            return order;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
