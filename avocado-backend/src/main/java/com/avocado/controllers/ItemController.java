@@ -51,6 +51,17 @@ public class ItemController extends BaseControllerImpl<Item, ItemDTO> {
         }
     }
 
+    @GetMapping("/ranking/top-items")
+    public ResponseEntity<?> getTop5SellingItems() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(service.findTop5SellingItems());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"error\": \"something went wrong\"}");
+        }
+    }
+
     @PatchMapping("/{id}")
     public ResponseEntity<?> blockUnblock(@PathVariable Long id) {
         try {

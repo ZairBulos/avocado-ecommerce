@@ -1,12 +1,15 @@
 package com.avocado.services.impl;
 
 import com.avocado.dtos.ItemDTO;
+import com.avocado.dtos.ranking.ItemRankingDTO;
 import com.avocado.entities.*;
 import com.avocado.mappers.BaseMapper;
 import com.avocado.mappers.ItemAttributesMapper;
 import com.avocado.mappers.ItemMapper;
 import com.avocado.repositories.*;
 import com.avocado.services.ItemService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +38,9 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
 
     @Autowired
     private ItemAttributesRepository itemAttributesRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     private final ItemMapper itemMapper = ItemMapper.getInstance();
 
@@ -152,6 +158,40 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
 
             return new PageImpl<>(dtos, pageable, pageables.getTotalElements());
         } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<ItemRankingDTO> findTop5SellingItems() throws Exception {
+        try {
+            TypedQuery<Object[]> query = entityManager.createQuery(
+                    "SELECT i, SUM(od.quantity) as totalSales " +
+                            "FROM Item i " +
+                            "LEFT JOIN OrderDetail od ON i.id = od.item.id " +
+                            "GROUP BY i " +
+                            "HAVING SUM(od.quantity) > 0 " +
+                            "ORDER BY totalSales DESC",
+                    Object[].class
+            );
+            query.setMaxResults(5);
+            List<Object[]> results = query.getResultList();
+            List<ItemRankingDTO> dtos = new ArrayList<>();
+
+            for (Object[] result : results) {
+                Item item = (Item) result[0];
+                Long sales = (Long) result[1];
+
+                ItemRankingDTO dto = new ItemRankingDTO();
+                dto.setItem(itemMapper.toDTO(item));
+                dto.setSales(sales);
+
+                dtos.add(dto);
+            }
+
+            return dtos;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new Exception(e.getMessage());
         }
     }

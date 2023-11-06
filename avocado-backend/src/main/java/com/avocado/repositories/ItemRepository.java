@@ -11,5 +11,6 @@ import java.util.List;
 public interface ItemRepository extends BaseRepository<Item, Long> {
 
     List<Item> findAllByBlockedFalse();
+
     Page<Item> findAllByBlockedFalse(Pageable pageable);
 }
