@@ -1,8 +1,10 @@
 package com.avocado.services.impl;
 
+import com.avocado.dtos.LoginDTO;
 import com.avocado.dtos.UserDTO;
 import com.avocado.dtos.ranking.UserRankingDTO;
 import com.avocado.entities.User;
+import com.avocado.enums.RoleUser;
 import com.avocado.mappers.BaseMapper;
 import com.avocado.mappers.UserMapper;
 import com.avocado.repositories.BaseRepository;
@@ -10,7 +12,9 @@ import com.avocado.repositories.UserRepository;
 import com.avocado.services.UserService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
@@ -25,6 +29,9 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserDTO, Long> implem
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private final UserMapper userMapper = UserMapper.getInstance();
 
@@ -87,6 +94,20 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserDTO, Long> implem
             }
 
             return dtos;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public User save(UserDTO dto) throws Exception {
+        try {
+            User user = userMapper.toEntity(dto);
+            user.setRole(RoleUser.CLIENT);
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+            return userRepository.save(user);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

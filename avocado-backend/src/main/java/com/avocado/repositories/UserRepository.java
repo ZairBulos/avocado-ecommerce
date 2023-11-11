@@ -6,9 +6,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends BaseRepository<User, Long> {
+
+    Optional<User> findByEmail(String email);
 
     @Query("SELECT COUNT(u) FROM User u " +
             "WHERE u.role = 'CLIENT' " +
