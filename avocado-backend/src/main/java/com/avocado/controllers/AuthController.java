@@ -1,6 +1,7 @@
 package com.avocado.controllers;
 
 import com.avocado.dtos.LoginDTO;
+import com.avocado.dtos.TokenDTO;
 import com.avocado.dtos.UserDTO;
 import com.avocado.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
         try {
+            TokenDTO token = new TokenDTO();
+            token.setAccessToken(service.login(dto));
+
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(service.login(dto));
+                    .body(token);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .build();
@@ -32,8 +36,11 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserDTO dto) {
         try {
+            TokenDTO token = new TokenDTO();
+            token.setAccessToken(service.register(dto));
+
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(service.register(dto));
+                    .body(token);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("{\"error\": \"something went wrong\"}");

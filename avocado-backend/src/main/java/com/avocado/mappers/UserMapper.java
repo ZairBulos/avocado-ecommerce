@@ -14,6 +14,6 @@ public interface UserMapper extends BaseMapper<User, UserDTO> {
     }
 
     @Override
-    @Mapping(target = "source.password", ignore = true)
+    @Mapping(target = "password", ignore = true)
     UserDTO toDTO(User source);
 }

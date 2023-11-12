@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,7 @@ public class UserController extends BaseControllerImpl<User, UserDTO> {
     private UserService service;
 
     @GetMapping("/statistics/users-registered-in-month")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> getUsersRegisteredInMonth(
             @RequestParam(name = "year", required = false) Integer year,
             @RequestParam(name = "month", required = false) Integer month
@@ -36,6 +38,7 @@ public class UserController extends BaseControllerImpl<User, UserDTO> {
     }
 
     @GetMapping("/statistics/users-registered-between-dates")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> getUsersRegisteredBetweenDates(
             @RequestParam(name = "startDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
             @RequestParam(name = "endDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
@@ -50,6 +53,7 @@ public class UserController extends BaseControllerImpl<User, UserDTO> {
     }
 
     @GetMapping("/ranking/top-users")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> getTop5UsersWithMostOrders() {
         try {
             return ResponseEntity.status(HttpStatus.OK)
