@@ -1,27 +1,34 @@
 import { useFormik } from "formik";
 
-import { useUser } from "./useUser";
-import { User } from "../types/User";
 import { userSchema } from "../schemas/userSchema";
 import authService from "../services/AuthService";
-import { decodeToken } from "../utils/JwtUtil";
+import { Register } from "../types/Register";
+import { useAuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export const useSignUp = () => {
-  const { user: initialValues } = useUser();
+  const initialValues = {
+    email: "",
+    password: "",
+    confirmPassword: "",
+  };
+  const { login } = useAuthContext();
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: initialValues,
     validationSchema: userSchema(),
     validateOnChange: true,
     validateOnBlur: true,
-    onSubmit: (entity: User) => handleSubmit(entity),
+    onSubmit: (entity: Register) => handleSubmit(entity),
   });
 
-  const handleSubmit = async (user: User) => {
+  const handleSubmit = async (user: Register) => {
     try {
       const token = await authService.register(user);
-      const decodedToken = decodeToken(token.accessToken);
-      console.log(decodedToken);
+      login(token.accessToken);
+
+      navigate("/");
     } catch (error) {
       console.log(error);
     }

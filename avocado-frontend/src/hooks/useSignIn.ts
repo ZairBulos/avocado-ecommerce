@@ -1,15 +1,18 @@
 import { useFormik } from "formik";
+import { useNavigate } from "react-router-dom";
 
-import { Login } from "../types/Login";
+import { useAuthContext } from "../context/AuthContext";
 import { loginSchema } from "../schemas/loginSchema";
 import authService from "../services/AuthService";
-import { decodeToken } from "../utils/JwtUtil";
+import { Login } from "../types/Login";
 
 export const useSignIn = () => {
   const initialValues = {
     email: "",
-    password: ""
+    password: "",
   };
+  const { login } = useAuthContext();
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: initialValues,
@@ -22,8 +25,9 @@ export const useSignIn = () => {
   const handleSubmit = async (user: Login) => {
     try {
       const token = await authService.login(user);
-      const decodedToken = decodeToken(token.accessToken);
-      console.log(decodedToken);
+      login(token.accessToken);
+
+      navigate("/");
     } catch (error) {
       console.log(error);
     }

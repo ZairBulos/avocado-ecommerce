@@ -1,7 +1,7 @@
 import { Base } from "./Base";
+import { UserRole } from "./UserRole";
 
 export interface User extends Base {
   email: string;
-  password: string;
-  confirmPassword?: string;
+  role: UserRole;
 }
