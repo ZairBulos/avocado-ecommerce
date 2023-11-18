@@ -3,6 +3,7 @@ import { useFormik } from "formik";
 import { Login } from "../types/Login";
 import { loginSchema } from "../schemas/loginSchema";
 import authService from "../services/AuthService";
+import { decodeToken } from "../utils/JwtUtil";
 
 export const useSignIn = () => {
   const initialValues = {
@@ -21,7 +22,8 @@ export const useSignIn = () => {
   const handleSubmit = async (user: Login) => {
     try {
       const token = await authService.login(user);
-      console.log(token);
+      const decodedToken = decodeToken(token.accessToken);
+      console.log(decodedToken);
     } catch (error) {
       console.log(error);
     }
