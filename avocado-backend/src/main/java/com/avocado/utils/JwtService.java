@@ -1,6 +1,6 @@
 package com.avocado.utils;
 
-import com.avocado.enums.RoleUser;
+import com.avocado.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -23,12 +23,11 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private Long JWT_EXPIRATION;
 
-    public String generateToken(String email, RoleUser role) {
+    public String generateToken(User user) {
         Date issuedAt = new Date(System.currentTimeMillis());
         Date expiration = new Date(System.currentTimeMillis() + JWT_EXPIRATION);
 
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role.name());
+        Map<String, Object> claims = generateClaims(user);
 
         SecretKey key = getSignInKey();
 
@@ -36,7 +35,7 @@ public class JwtService {
                 .header()
                 .type("JWT")
                 .and()
-                .subject(email)
+                .subject(user.getEmail())
                 .claims(claims)
                 .issuedAt(issuedAt)
                 .expiration(expiration)
@@ -67,6 +66,14 @@ public class JwtService {
                 .getPayload();
 
         return claimsResolver.apply(payload);
+    }
+
+    private Map<String, Object> generateClaims(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", user.getRole().name());
+        claims.put("id", user.getId());
+
+        return claims;
     }
 
     private SecretKey getSignInKey() {

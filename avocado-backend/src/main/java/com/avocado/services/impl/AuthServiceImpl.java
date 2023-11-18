@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
                     () -> new Exception("User with email " + dto.getEmail() + " not found")
             );
 
-            return jwtService.generateToken(user.getEmail(), user.getRole());
+            return jwtService.generateToken(user);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -49,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
     public String register(UserDTO dto) throws Exception {
         try {
             User user = userService.save(dto);
-            return jwtService.generateToken(user.getEmail(), user.getRole());
+            return jwtService.generateToken(user);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
