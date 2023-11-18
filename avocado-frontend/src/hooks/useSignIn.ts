@@ -2,6 +2,7 @@ import { useFormik } from "formik";
 
 import { Login } from "../types/Login";
 import { loginSchema } from "../schemas/loginSchema";
+import authService from "../services/AuthService";
 
 export const useSignIn = () => {
   const initialValues = {
@@ -18,7 +19,12 @@ export const useSignIn = () => {
   });
 
   const handleSubmit = async (user: Login) => {
-    console.log(user);
+    try {
+      const token = await authService.login(user);
+      console.log(token);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return {
