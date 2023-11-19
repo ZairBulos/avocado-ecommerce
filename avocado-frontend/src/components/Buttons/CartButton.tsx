@@ -16,10 +16,7 @@ function CartButton() {
         </Button>
       </DropdownTrigger>
       <DropdownMenu aria-label="Cart Actions" variant="faded">
-        <DropdownItem 
-          key="cart" 
-          description="8 Items - Subtotal: $999"
-        >
+        <DropdownItem key="cart" description="8 Items - Subtotal: $999">
           View Cart
         </DropdownItem>
       </DropdownMenu>

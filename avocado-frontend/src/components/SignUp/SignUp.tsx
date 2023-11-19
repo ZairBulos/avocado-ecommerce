@@ -48,7 +48,7 @@ function SignUp() {
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium leading-6 text-gray-900">Password</label>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium leading-6 text-gray-900">Confirm Password</label>
             <input 
               type="password"
               name="confirmPassword" 

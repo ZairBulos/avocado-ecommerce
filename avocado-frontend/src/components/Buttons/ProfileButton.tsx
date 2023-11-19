@@ -1,15 +1,16 @@
 import {
+  Dropdown,
   DropdownItem,
   DropdownTrigger,
   DropdownSection,
-  Dropdown,
   DropdownMenu,
   Button,
 } from "@nextui-org/react";
 import { Link } from "react-router-dom";
+
 import UserIcon from "../../assets/user";
-import UserFilledIcon from "../../assets/user-filled";
 import LogoutIcon from "../../assets/logout";
+import UserFilledIcon from "../../assets/user-filled";
 import { useAuthContext } from "../../context/AuthContext";
 import { useLogOut } from "../../hooks/useLogOut";
 
@@ -20,7 +21,7 @@ function ProfileButton() {
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
-        <Button isIconOnly aria-label="User" variant="light">
+        <Button isIconOnly aria-label="Profile" variant="light">
           {user ? (
             <UserFilledIcon width="32" height="32" />
           ) : (
@@ -28,12 +29,13 @@ function ProfileButton() {
           )}
         </Button>
       </DropdownTrigger>
+
       <DropdownMenu variant="faded" aria-label="Profile Actions">
         <DropdownSection showDivider>
           {user ? (
             <DropdownItem key="profile" className="h-14 gap-2">
               <p className="font-semibold">Signed in as</p>
-              <p className="font-semibold">{user?.email}</p>
+              <p className="font-semibold">{user.email}</p>
             </DropdownItem>
           ) : (
             <DropdownItem key="sign-in">
@@ -41,13 +43,14 @@ function ProfileButton() {
             </DropdownItem>
           )}
         </DropdownSection>
-        <DropdownSection>
+
+        <DropdownSection showDivider>
           <DropdownItem
             key="logout"
             color="danger"
             className="text-danger"
-            startContent={<LogoutIcon width="16" height="16" />}
             onClick={handleLogOut}
+            startContent={<LogoutIcon width="16" height="16" />}
           >
             Log Out
           </DropdownItem>
