@@ -1,21 +1,17 @@
-import { useState } from "react";
-
-import { Item } from "../types/Item";
-import itemsJSON from "../mocks/items.json";
 import ItemList from "../components/Item/ItemList";
-import CustomPagination from "../components/Pagination/Pagination";
+import Loader from "../components/Loader/Loader";
+import { useItems } from "../hooks/useItems";
 
 function Home() {
-  const [items, setItems] = useState<Item[]>(itemsJSON);
-
-  const handlePageChange = (current: number) => {
-    console.log(current);
-  }; 
+  const { items, loading } = useItems();
 
   return (
     <>
-      <ItemList items={items} />
-      <CustomPagination totalPages={4} handlePageChange={handlePageChange} />
+      {loading ? (
+        <Loader label="Loading..." color="success" labelColor="success" />
+      ) : (
+        <ItemList items={items} />
+      )}
     </>
   );
 }
