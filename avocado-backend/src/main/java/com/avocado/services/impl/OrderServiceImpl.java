@@ -11,6 +11,7 @@ import com.avocado.mappers.OrderDetailMapper;
 import com.avocado.mappers.OrderMapper;
 import com.avocado.repositories.*;
 import com.avocado.services.OrderService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,9 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, OrderDTO, Long> imp
 
     @Autowired
     private ItemStockRepository itemStockRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private final OrderMapper orderMapper = OrderMapper.getInstance();
 
@@ -95,26 +99,28 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, OrderDTO, Long> imp
     @Override
     public List<OrderDTO> findAllByUserId(Long userId) throws Exception {
         try {
-            try {
-                List<Order> entities = orderRepository.findAllByUser_Id(userId);
-                List<OrderDTO> dtos = new ArrayList<>();
-
-                for (Order order : entities) {
-                    OrderDTO dto = orderMapper.toDTO(order);
-
-                    Double total = orderRepository.findTotalForOrder(order.getId());
-                    List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder_Id(order.getId());
-
-                    dto.setTotal(total);
-                    dto.setOrderDetails(orderDetailMapper.toDTOsList(orderDetails));
-
-                    dtos.add(dto);
-                }
-
-                return dtos;
-            } catch (Exception e) {
-                throw new Exception(e.getMessage());
+            if (!userRepository.existsById(userId)) {
+                throw new EntityNotFoundException("User not found with id:" + userId);
             }
+
+            List<Order> entities = orderRepository.findAllByUser_Id(userId);
+            List<OrderDTO> dtos = new ArrayList<>();
+
+            for (Order order : entities) {
+                OrderDTO dto = orderMapper.toDTO(order);
+
+                Double total = orderRepository.findTotalForOrder(order.getId());
+                List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder_Id(order.getId());
+
+                dto.setTotal(total);
+                dto.setOrderDetails(orderDetailMapper.toDTOsList(orderDetails));
+
+                dtos.add(dto);
+            }
+
+            return dtos;
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -123,6 +129,10 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, OrderDTO, Long> imp
     @Override
     public Page<OrderDTO> findAllByUserId(Long userId, Pageable pageable) throws Exception {
         try {
+            if (!userRepository.existsById(userId)) {
+                throw new EntityNotFoundException("User not found with id:" + userId);
+            }
+
             Page<Order> pageables = orderRepository.findAllByUser_Id(userId, pageable);
             List<OrderDTO> dtos = new ArrayList<>();
 
@@ -139,6 +149,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, OrderDTO, Long> imp
             }
 
             return new PageImpl<>(dtos, pageable, pageables.getTotalElements());
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -147,9 +159,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, OrderDTO, Long> imp
     @Override
     public OrderDTO findById(Long id) throws Exception {
         try {
-            Order entity = orderRepository
-                    .findById(id)
-                    .orElseThrow(() -> new RuntimeException("Order with id "+ id +" not found"));
+            Order entity = orderRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + id));
             OrderDTO dto = orderMapper.toDTO(entity);
 
             Double total = orderRepository.findTotalForOrder(id);
@@ -159,6 +170,8 @@ public class OrderServiceImpl extends BaseServiceImpl<Order, OrderDTO, Long> imp
             dto.setOrderDetails(orderDetailMapper.toDTOsList(orderDetails));
 
             return dto;
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

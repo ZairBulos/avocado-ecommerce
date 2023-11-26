@@ -3,6 +3,7 @@ package com.avocado.controllers;
 import com.avocado.dtos.OrderDTO;
 import com.avocado.entities.Order;
 import com.avocado.services.OrderService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -26,8 +27,8 @@ public class OrderController extends BaseControllerImpl<Order, OrderDTO> {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findAll());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -39,8 +40,8 @@ public class OrderController extends BaseControllerImpl<Order, OrderDTO> {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findAllPaged(pageable));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -50,9 +51,12 @@ public class OrderController extends BaseControllerImpl<Order, OrderDTO> {
         try {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findAllByUserId(id));
-        } catch (Exception e) {
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+                    .body("{\"error\": \"User not found.\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -62,9 +66,12 @@ public class OrderController extends BaseControllerImpl<Order, OrderDTO> {
         try {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findAllByUserId(id, pageable));
-        } catch (Exception e) {
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+                    .body("{\"error\": \"User not found.\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -75,9 +82,12 @@ public class OrderController extends BaseControllerImpl<Order, OrderDTO> {
         try {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findById(id));
-        } catch (Exception e) {
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+                    .body("{\"error\": \"Order not found.\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -90,7 +100,7 @@ public class OrderController extends BaseControllerImpl<Order, OrderDTO> {
                     .body(service.save(dto));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"something went wrong\"}");
+                    .body("{\"error\": \"Error creating Order.\"}");
         }
     }
 }

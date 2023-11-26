@@ -32,8 +32,8 @@ public class UserController extends BaseControllerImpl<User, UserDTO> {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.countUsersRegisteredInMonth(year, month));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -47,8 +47,8 @@ public class UserController extends BaseControllerImpl<User, UserDTO> {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.countUsersRegisteredBetweenDates(startDate, endDate));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -59,8 +59,8 @@ public class UserController extends BaseControllerImpl<User, UserDTO> {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findTop5UsersWithMostOrders());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 }

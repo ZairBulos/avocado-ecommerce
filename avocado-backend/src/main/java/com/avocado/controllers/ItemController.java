@@ -3,6 +3,7 @@ package com.avocado.controllers;
 import com.avocado.dtos.ItemDTO;
 import com.avocado.entities.Item;
 import com.avocado.services.ItemService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -25,8 +26,8 @@ public class ItemController extends BaseControllerImpl<Item, ItemDTO> {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findAllPaged(pageable));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -36,8 +37,8 @@ public class ItemController extends BaseControllerImpl<Item, ItemDTO> {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findAllUnlocked());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -47,8 +48,8 @@ public class ItemController extends BaseControllerImpl<Item, ItemDTO> {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findAllUnlocked(pageable));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -59,8 +60,8 @@ public class ItemController extends BaseControllerImpl<Item, ItemDTO> {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findTop5SellingItems());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -73,7 +74,7 @@ public class ItemController extends BaseControllerImpl<Item, ItemDTO> {
                     .body(service.save(dto));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"something went wrong\"}");
+                    .body("{\"error\": \"Error creating Item.\"}");
         }
     }
 
@@ -84,9 +85,12 @@ public class ItemController extends BaseControllerImpl<Item, ItemDTO> {
         try {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.update(id, dto));
+        } catch (EntityNotFoundException E) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"error\": \"Item not found.\"}");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"something went wrong\"}");
+                    .body("{\"error\": \"Error updating Item.\"}");
         }
     }
 
@@ -96,9 +100,12 @@ public class ItemController extends BaseControllerImpl<Item, ItemDTO> {
         try {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.blockUnblock(id));
-        } catch (Exception e) {
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+                    .body("{\"error\": \"Item not found.\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -110,9 +117,12 @@ public class ItemController extends BaseControllerImpl<Item, ItemDTO> {
             service.delete(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .build();
+        } catch (EntityNotFoundException E) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"error\": \"Item not found.\"}");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"something went wrong\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 }

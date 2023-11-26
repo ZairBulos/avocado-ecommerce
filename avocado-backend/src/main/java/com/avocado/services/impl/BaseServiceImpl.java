@@ -5,6 +5,7 @@ import com.avocado.entities.Base;
 import com.avocado.mappers.BaseMapper;
 import com.avocado.repositories.BaseRepository;
 import com.avocado.services.BaseService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,14 +46,12 @@ public abstract class BaseServiceImpl<E extends Base, D extends BaseDTO, ID exte
     @Override
     public D findById(ID id) throws Exception {
         try {
-            Optional<E> optional = baseRepository.findById(id);
+            E entity = baseRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Entity not found with id: " + id));
 
-            if (optional.isEmpty()) {
-                throw new Exception("Entity not found");
-            }
-
-            E entity = optional.get();
             return baseMapper.toDTO(entity);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -76,11 +75,13 @@ public abstract class BaseServiceImpl<E extends Base, D extends BaseDTO, ID exte
             Optional<E> optional = baseRepository.findById(id);
 
             if (optional.isEmpty()) {
-                throw new Exception("Entity not found");
+                throw new EntityNotFoundException("Entity not found with id: " + id);
             }
 
             E entity = baseMapper.toEntity(dto);
             return baseRepository.save(entity);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -93,10 +94,12 @@ public abstract class BaseServiceImpl<E extends Base, D extends BaseDTO, ID exte
             Optional<E> optional = baseRepository.findById(id);
 
             if (optional.isEmpty()) {
-                throw new Exception("Entity not found");
+                throw new EntityNotFoundException("Entity not found with id: " + id);
             }
 
             baseRepository.deleteById(id);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

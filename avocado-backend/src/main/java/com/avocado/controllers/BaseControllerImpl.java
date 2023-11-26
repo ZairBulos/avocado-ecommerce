@@ -3,6 +3,7 @@ package com.avocado.controllers;
 import com.avocado.dtos.BaseDTO;
 import com.avocado.entities.Base;
 import com.avocado.services.BaseService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -22,8 +23,8 @@ public abstract class BaseControllerImpl<E extends Base, D extends BaseDTO> impl
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findAll());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -34,8 +35,8 @@ public abstract class BaseControllerImpl<E extends Base, D extends BaseDTO> impl
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findAll(pageable));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -45,9 +46,12 @@ public abstract class BaseControllerImpl<E extends Base, D extends BaseDTO> impl
         try {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.findById(id));
-        } catch (Exception e) {
+        } catch (EntityNotFoundException E) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"something went wrong\"}");
+                    .body("{\"error\": \"Entity not found.\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 
@@ -59,7 +63,7 @@ public abstract class BaseControllerImpl<E extends Base, D extends BaseDTO> impl
                     .body(service.save(dto));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"something went wrong\"}");
+                    .body("{\"error\": \"Error creating entity.\"}");
         }
     }
 
@@ -69,9 +73,12 @@ public abstract class BaseControllerImpl<E extends Base, D extends BaseDTO> impl
         try {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(service.update(id, dto));
+        } catch (EntityNotFoundException E) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("{\"error\": \"Entity not found.\"}");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"something went wrong\"}");
+                    .body("{\"error\": \"Error updating entity.\"}");
         }
     }
 
@@ -82,9 +89,12 @@ public abstract class BaseControllerImpl<E extends Base, D extends BaseDTO> impl
             service.delete(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .build();
+        } catch (EntityNotFoundException E) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"error\": \"Entity not found.\"}");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"something went wrong\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error.\"}");
         }
     }
 }

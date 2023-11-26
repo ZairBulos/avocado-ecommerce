@@ -9,6 +9,7 @@ import com.avocado.mappers.ItemMapper;
 import com.avocado.repositories.*;
 import com.avocado.services.ItemService;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,13 +200,9 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
     @Override
     public ItemDTO findById(Long id) throws Exception {
         try {
-            Optional<Item> optional = itemRepository.findById(id);
-
-            if (optional.isEmpty()) {
-                throw new Exception("Item not found");
-            }
-
-            ItemDTO dto = itemMapper.toDTO(optional.get());
+            Item item = itemRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Item not found with id: " + id));
+            ItemDTO dto = itemMapper.toDTO(item);
 
             ItemImage image = itemImageRepository.findByItem_Id(id);
             Integer currentStock = itemStockRepository.findCurrentStockByItemId(id);
@@ -217,8 +214,9 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
             dto.setCurrentStock(currentStock);
             dto.setAttributes(itemAttributesMapper.toDTO(attributes));
 
-
             return dto;
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -262,9 +260,8 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
     @Transactional
     public Item update(Long id, ItemDTO dto) throws Exception {
         try {
-            Item item = itemRepository
-                    .findById(id)
-                    .orElseThrow(() -> new RuntimeException("Item with id "+ id +" not found"));
+            Item item = itemRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Item not found with id: " + id));
 
             // Item
             item.setName(dto.getName());
@@ -305,6 +302,8 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
             }
 
             return item;
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -314,13 +313,14 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
     @Transactional
     public Item blockUnblock(Long id) throws Exception {
         try {
-            Item item = itemRepository
-                    .findById(id)
-                    .orElseThrow(() -> new RuntimeException("Item with id "+ id +" not found"));
+            Item item = itemRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Item not found with id: " + id));
 
             item.setBlocked(!item.getBlocked());
 
             return itemRepository.save(item);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -333,7 +333,7 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
             Optional<Item> optional = itemRepository.findById(id);
 
             if (optional.isEmpty()) {
-                throw new Exception("Entity not found");
+                throw new EntityNotFoundException("Item not found with id: " + id);
             }
 
             // Image
@@ -350,6 +350,8 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
 
             // Item
             itemRepository.deleteById(id);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
