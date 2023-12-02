@@ -1,8 +1,8 @@
 import { API_URL } from "../constants";
-import { Endpoint } from "../types/Endpoint.d.ts";
 import { Item } from "../types/Item";
+import { Endpoint } from "../types/Endpoint.d.ts";
 
-export const findAllUnlocked = async (): Promise<Item[]> => {
+const findAllUnlocked = async (): Promise<Item[]> => {
   // eslint-disable-next-line no-useless-catch
   try {
     const response = await fetch(`${API_URL}/${Endpoint.ITEM}/unlocked`);

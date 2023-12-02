@@ -1,9 +1,9 @@
 import { API_URL } from "../constants";
 import { Base } from "../types/Base";
 import { Page } from "../types/Page";
-import { Endpoint } from "../types/Endpoint";
+import { Endpoint } from "../types/Endpoint.d.ts";
 
-export const fetchWithAuthorization = async <T>(
+const fetchWithAuthorization = async <T>(
   endpoint: string,
   method: string,
   token?: string,
@@ -33,7 +33,7 @@ export const fetchWithAuthorization = async <T>(
   }
 };
 
-export const findAll = async <T extends Base>(
+const findAll = async <T extends Base>(
   endpoint: Endpoint,
   token?: string
 ): Promise<T[]> => {
@@ -56,7 +56,7 @@ export const findAll = async <T extends Base>(
   }
 };
 
-export const findAllPageable = async <T extends Base>(
+const findAllPageable = async <T extends Base>(
   endpoint: Endpoint,
   page?: number,
   size?: number,
@@ -81,7 +81,7 @@ export const findAllPageable = async <T extends Base>(
   }
 };
 
-export const findById = async <T extends Base>(
+const findById = async <T extends Base>(
   endpoint: Endpoint,
   id: number,
   token?: string
@@ -105,7 +105,7 @@ export const findById = async <T extends Base>(
   }
 };
 
-export const save = async <T extends Base>(
+const save = async <T extends Base>(
   endpoint: Endpoint,
   entity: T,
   token?: string
@@ -130,7 +130,7 @@ export const save = async <T extends Base>(
   }
 };
 
-export const update = async <T extends Base>(
+const update = async <T extends Base>(
   endpoint: Endpoint,
   id: number,
   entity: T,
@@ -156,7 +156,7 @@ export const update = async <T extends Base>(
   }
 };
 
-export const remove = async (
+const remove = async (
   endpoint: Endpoint,
   id: number,
   token?: string
