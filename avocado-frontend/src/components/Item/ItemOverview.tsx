@@ -1,7 +1,24 @@
+import React, { useState } from "react";
 import { Item } from "../../types/Item";
+import { useCartContext } from "../../context/CartContext";
 
 function ItemOverview({ item }: { item: Item | null }) {
+  const [quantity, setQuantity] = useState<number>(1);
+  const { addToCart } = useCartContext();
+
   if (item == null) return;
+
+  const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuantity = parseInt(event.target.value, 10);
+    setQuantity(newQuantity);
+  };
+
+  const handleAddToCart = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    addToCart(item, quantity);
+    setQuantity(1);
+  };
 
   return (
     <section className="mx-auto py-8 px-8 lg:px-48">
@@ -15,22 +32,27 @@ function ItemOverview({ item }: { item: Item | null }) {
           <h1 className="text-xl font-bold mb-2">{item.name}</h1>
           <p className="text-lg mb-2">$ {item.sellPrice}</p>
           <div className="flex items-center w-full">
-            <input
-              type="number"
-              min={1}
-              max={item.currentStock}
-              className="p-2 border border-gray-300 text-black"
-              disabled={item.currentStock <= 0}
-            />
-            {item.currentStock <= 0 ? (
-              <button className="bg-red-500 hover:bg-red-600 text-white p-2 whitespace-nowrap" disabled>
-                Not available
-              </button>
-            ) : (
-              <button className="bg-green-500 hover:bg-green-600 text-white p-2 whitespace-nowrap">
-                Add to cart
-              </button>
-            )}
+            <form onSubmit={handleAddToCart}>
+              <input
+                type="number"
+                min={1}
+                max={item.currentStock}
+                pattern="^[0-9]+"
+                className="p-2 border border-gray-300 text-black"
+                disabled={item.currentStock <= 0}
+                value={quantity}
+                onChange={handleQuantityChange}
+              />
+              {item.currentStock <= 0 ? (
+                <button type="button" className="bg-red-500 hover:bg-red-600 text-white p-2 whitespace-nowrap" disabled>
+                  Not available
+                </button>
+              ) : (
+                <button type="submit" className="bg-green-500 hover:bg-green-600 text-white p-2 whitespace-nowrap">
+                  Add to cart
+                </button>
+              )}
+            </form>
           </div>
         </div>
       </div>

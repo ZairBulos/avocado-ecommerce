@@ -5,9 +5,15 @@ import {
   DropdownMenu,
   Button,
 } from "@nextui-org/react";
+import { Link } from "react-router-dom";
 import BasketIcon from "../../assets/basket";
+import { useCartContext } from "../../context/CartContext";
 
 function CartButton() {
+  const { items, getCartTotal } = useCartContext();
+
+  const totalUnitsInCart = items.reduce((total, item) => total + item.quantity, 0);
+
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
@@ -16,8 +22,8 @@ function CartButton() {
         </Button>
       </DropdownTrigger>
       <DropdownMenu aria-label="Cart Actions" variant="faded">
-        <DropdownItem key="cart" description="8 Items - Subtotal: $999">
-          View Cart
+        <DropdownItem key="cart" description={`${totalUnitsInCart} Items - Total $${getCartTotal()}`}>
+          <Link to="/cart">View Cart</Link>
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>
