@@ -7,6 +7,7 @@ import Footer from "../components/Footer/Footer";
 const ItemDetail = lazy(() => import("../pages/ItemDetail"));
 const SignIn = lazy(() => import("../components/SignIn/SignIn"));
 const SignUp = lazy(() => import("../components/SignUp/SignUp"));
+const Cart = lazy(() => import("../pages/Cart"));
 
 function IndexRoute() {
   return (
@@ -19,6 +20,7 @@ function IndexRoute() {
         </Route>
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/cart" element={<Cart />} />
       </Routes>
       <Footer />
     </>

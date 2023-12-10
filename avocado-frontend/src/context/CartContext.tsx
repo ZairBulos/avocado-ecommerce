@@ -9,7 +9,7 @@ import React, {
 import { Item } from "../types/Item";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
-type ItemCart = {
+export type ItemCart = {
   item: Item;
   quantity: number;
 };

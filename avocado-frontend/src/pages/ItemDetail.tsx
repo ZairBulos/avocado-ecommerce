@@ -13,13 +13,13 @@ function ItemDetail() {
   }, [id]);
 
   return (
-    <>
+    <main>
       {loading ? (
         <Loader label="Loading..." color="success" labelColor="success" />
       ) : (
         <ItemOverview item={item} />
       )}
-    </>
+    </main>
   );
 }
 
