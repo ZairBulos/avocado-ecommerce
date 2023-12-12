@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Item } from "../../types/Item";
 import { useCartContext } from "../../context/CartContext";
+import { toastSuccess } from "../../utils/TostifyUtil";
 
 function ItemOverview({ item }: { item: Item | null }) {
   const [quantity, setQuantity] = useState<number>(1);
@@ -17,6 +18,7 @@ function ItemOverview({ item }: { item: Item | null }) {
     event.preventDefault();
 
     addToCart(item, quantity);
+    toastSuccess(`${quantity} ${item.name} added to cart`);
     setQuantity(1);
   };
 
