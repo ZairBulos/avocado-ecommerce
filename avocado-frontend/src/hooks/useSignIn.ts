@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useAuthContext } from "../context/AuthContext";
 import { loginSchema } from "../schemas/loginSchema";
@@ -12,6 +12,7 @@ export const useSignIn = () => {
     password: "",
   };
   const { login } = useAuthContext();
+  const location = useLocation();
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -27,7 +28,8 @@ export const useSignIn = () => {
       const token = await AuthService.login(user);
       login(token.accessToken);
 
-      navigate("/");
+      const from = (location.state && location.state.from) || "/";
+      navigate(from);
     } catch (error) {
       console.log(error);
     }
