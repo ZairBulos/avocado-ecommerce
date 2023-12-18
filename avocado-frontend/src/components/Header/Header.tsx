@@ -4,8 +4,12 @@ import { Navbar, NavbarBrand, NavbarContent } from "@nextui-org/react";
 import AvoIcon from "../../assets/avo-icon";
 import CartButton from "../Buttons/CartButton";
 import ProfileButton from "../Buttons/ProfileButton";
+import { useAuthContext } from "../../context/AuthContext";
+import UserButton from "../Buttons/UserButton";
 
 function Header() {
+  const { user } = useAuthContext();
+
   return (
     <Navbar position="static" isBordered>
       <NavbarContent justify="start">
@@ -19,7 +23,7 @@ function Header() {
 
       <NavbarContent as="div" className="items-center" justify="end">
         <CartButton />
-        <ProfileButton />
+        {!user ? <ProfileButton /> : <UserButton user={user} />}
       </NavbarContent>
     </Navbar>
   );
