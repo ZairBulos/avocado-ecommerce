@@ -1,8 +1,8 @@
 import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
-import { Item } from "../../types/Item";
+import { ItemSimple } from "../../types/Item";
 import { Link } from "react-router-dom";
 
-function ItemCard({ item }: { item: Item }) {
+function ItemCard({ item }: { item: ItemSimple }) {
   return (
     <Card shadow="sm" isPressable className="rounded-none">
       <Link to={`/items/${item.id}`}>

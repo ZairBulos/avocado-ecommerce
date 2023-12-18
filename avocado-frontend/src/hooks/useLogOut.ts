@@ -1,12 +1,12 @@
 import { useAuthContext } from "../context/AuthContext";
-import authService from "../services/AuthService";
+import AuthService from "../services/AuthService";
 
 export const useLogOut = () => {
   const { logout } = useAuthContext();
 
   const handleLogOut = async () => {
     try {
-      await authService.logout();
+      await AuthService.logout();
       logout();
     } catch (error) {
       console.log(error);

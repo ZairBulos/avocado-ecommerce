@@ -1,21 +1,20 @@
 import { API_URL } from "../constants";
-import { Login } from "../types/Login";
-import { Register } from "../types/Register";
+import { Auth } from "../types/Auth";
 import { Token } from "../types/Token";
 
-const login = async (user: Login): Promise<Token> => {
+const login = async (user: Auth): Promise<Token> => {
   // eslint-disable-next-line no-useless-catch
   try {
     const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
+      body: JSON.stringify(user),
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(user),
     });
 
     if (!response.ok) {
-      throw new Error("HTTP Status. " + response.status);
+      throw new Error("HTTP Status: " + response.status);
     }
 
     const data = (await response.json()) as Token;
@@ -25,19 +24,19 @@ const login = async (user: Login): Promise<Token> => {
   }
 };
 
-const register = async (user: Register): Promise<Token> => {
+const register = async (user: Auth): Promise<Token> => {
   // eslint-disable-next-line no-useless-catch
   try {
     const response = await fetch(`${API_URL}/auth/register`, {
       method: "POST",
+      body: JSON.stringify(user),
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(user),
     });
 
     if (!response.ok) {
-      throw new Error("HTTP Status. " + response.status);
+      throw new Error("HTTP Status: " + response.status);
     }
 
     const data = (await response.json()) as Token;

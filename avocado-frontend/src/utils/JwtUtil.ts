@@ -1,5 +1,5 @@
 import { JwtPayload, jwtDecode } from "jwt-decode";
-import { UserRole } from "../types/UserRole";
+import { UserRole } from "../types/User";
 
 type CustomJwtPayload = JwtPayload & {
   role: UserRole,

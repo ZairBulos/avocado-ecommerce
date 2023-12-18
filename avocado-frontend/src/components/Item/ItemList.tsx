@@ -1,7 +1,7 @@
-import { Item } from "../../types/Item";
+import { ItemSimple } from "../../types/Item";
 import ItemCard from "./ItemCard";
 
-function ItemList({ items }: { items: Item[] }) {
+function ItemList({ items }: { items: ItemSimple[] }) {
   return (
     <div
       role="list"

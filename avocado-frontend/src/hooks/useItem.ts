@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Item } from "../types/Item";
-import baseService from "../services/BaseService";
-import { Endpoint } from "../types/Endpoint.d.ts";
+import ItemService from "../services/ItemService";
 
 export const useItem = () => {
   const [item, setItem] = useState<Item | null>(null);
@@ -11,7 +10,7 @@ export const useItem = () => {
     try {
       setLoading(true);
 
-      const newItem = await baseService.findById<Item>(Endpoint.ITEM, id);
+      const newItem = await ItemService.findById(id);
       setItem(newItem);
     } catch (error) {
       console.error("Error fetching item:", error);

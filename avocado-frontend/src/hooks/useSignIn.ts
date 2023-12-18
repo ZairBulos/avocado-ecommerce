@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuthContext } from "../context/AuthContext";
 import { loginSchema } from "../schemas/loginSchema";
-import authService from "../services/AuthService";
-import { Login } from "../types/Login";
+import AuthService from "../services/AuthService";
+import { Auth } from "../types/Auth";
 
 export const useSignIn = () => {
   const initialValues = {
@@ -19,12 +19,12 @@ export const useSignIn = () => {
     validationSchema: loginSchema(),
     validateOnChange: true,
     validateOnBlur: true,
-    onSubmit: (entity: Login) => handleSubmit(entity),
+    onSubmit: (entity: Auth) => handleSubmit(entity),
   });
 
-  const handleSubmit = async (user: Login) => {
+  const handleSubmit = async (user: Auth) => {
     try {
-      const token = await authService.login(user);
+      const token = await AuthService.login(user);
       login(token.accessToken);
 
       navigate("/");
