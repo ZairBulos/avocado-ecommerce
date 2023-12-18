@@ -1,9 +1,9 @@
 package com.avocado.controllers;
 
-import com.avocado.dtos.LoginDTO;
-import com.avocado.dtos.TokenDTO;
-import com.avocado.dtos.UserDTO;
+import com.avocado.dtos.auth.AuthDTO;
 import com.avocado.services.AuthService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +20,13 @@ public class AuthController {
     private AuthService service;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
+    public ResponseEntity<?> login(@Valid @RequestBody AuthDTO dto) {
         try {
-            TokenDTO token = new TokenDTO();
-            token.setAccessToken(service.login(dto));
-
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(token);
+                    .body(service.login(dto));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"error\": \"User not found\"}");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .build();
@@ -34,16 +34,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserDTO dto) {
+    public ResponseEntity<?> register(@Valid @RequestBody AuthDTO dto) {
         try {
-            TokenDTO token = new TokenDTO();
-            token.setAccessToken(service.register(dto));
-
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(token);
+                    .body(service.register(dto));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"something went wrong\"}");
+                    .body("{\"error\": \"Failed to register User\"}");
         }
     }
 }

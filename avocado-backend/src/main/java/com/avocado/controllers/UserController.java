@@ -1,7 +1,5 @@
 package com.avocado.controllers;
 
-import com.avocado.dtos.UserDTO;
-import com.avocado.entities.User;
 import com.avocado.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,7 +15,7 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("api/users")
-public class UserController extends BaseControllerImpl<User, UserDTO> {
+public class UserController {
 
     @Autowired
     private UserService service;

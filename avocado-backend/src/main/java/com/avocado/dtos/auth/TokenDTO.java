@@ -1,4 +1,4 @@
-package com.avocado.dtos;
+package com.avocado.dtos.auth;
 
 import lombok.Data;
 

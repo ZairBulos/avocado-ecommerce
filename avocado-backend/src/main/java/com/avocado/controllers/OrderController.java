@@ -1,12 +1,10 @@
 package com.avocado.controllers;
 
-import com.avocado.dtos.OrderDTO;
-import com.avocado.entities.Order;
+import com.avocado.dtos.order.OrderRequestDTO;
 import com.avocado.services.OrderService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,12 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/orders")
-public class OrderController extends BaseControllerImpl<Order, OrderDTO> {
+public class OrderController {
 
     @Autowired
     private OrderService service;
 
-    @Override
     @GetMapping("")
     @PreAuthorize("hasAuthority('CLIENT')")
     public ResponseEntity<?> getAll() {
@@ -28,54 +25,25 @@ public class OrderController extends BaseControllerImpl<Order, OrderDTO> {
                     .body(service.findAll());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("{\"error\": \"Internal server error.\"}");
-        }
-    }
-
-    @Override
-    @GetMapping("/paged")
-    @PreAuthorize("hasAuthority('CLIENT')")
-    public ResponseEntity<?> getAll(@PageableDefault(page = 0, size = 4) Pageable pageable) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(service.findAllPaged(pageable));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("{\"error\": \"Internal server error.\"}");
+                    .body("{\"error\": \"Internal server error\"}");
         }
     }
 
     @GetMapping("/{id}/purchase-history")
     @PreAuthorize("hasAuthority('CLIENT')")
-    public ResponseEntity<?> getAllByUserId(@PathVariable Long id) {
+    public ResponseEntity<?> getAllByUser(@PathVariable Long id) {
         try {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(service.findAllByUserId(id));
+                    .body(service.findAllByUser(id));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"User not found.\"}");
+                    .body("{\"error\": \"User not found\"}");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("{\"error\": \"Internal server error.\"}");
+                    .body("{\"error\": \"Internal server error\"}");
         }
     }
 
-    @GetMapping("/{id}/purchase-history/paged")
-    @PreAuthorize("hasAuthority('CLIENT')")
-    public ResponseEntity<?> getAllByUserId(@PathVariable Long id, @PageableDefault(page = 0, size = 4) Pageable pageable) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(service.findAllByUserId(id, pageable));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"User not found.\"}");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("{\"error\": \"Internal server error.\"}");
-        }
-    }
-
-    @Override
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('CLIENT')")
     public ResponseEntity<?> getOne(@PathVariable Long id) {
@@ -84,23 +52,38 @@ public class OrderController extends BaseControllerImpl<Order, OrderDTO> {
                     .body(service.findById(id));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("{\"error\": \"Order not found.\"}");
+                    .body("{\"error\": \"Order not found\"}");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("{\"error\": \"Internal server error.\"}");
+                    .body("{\"error\": \"Internal server error\"}");
         }
     }
 
-    @Override
-    @PostMapping
+    @PostMapping("")
     @PreAuthorize("hasAuthority('CLIENT')")
-    public ResponseEntity<?> save(@RequestBody OrderDTO dto) {
+    public ResponseEntity<?> save(@Valid @RequestBody OrderRequestDTO dto) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(service.save(dto));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"Error creating Order.\"}");
+                    .body("{\"error\": \"Error creating Order\"}");
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('CLIENT')")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        try {
+            service.delete(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"error\": \"Order not found\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Internal server error\"}");
         }
     }
 }

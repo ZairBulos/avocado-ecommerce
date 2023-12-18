@@ -1,17 +1,20 @@
 package com.avocado.services;
 
-import com.avocado.dtos.ItemDTO;
+import com.avocado.dtos.item.ItemDTO;
+import com.avocado.dtos.item.ItemRequestDTO;
+import com.avocado.dtos.item.ItemSimpleDTO;
 import com.avocado.dtos.ranking.ItemRankingDTO;
-import com.avocado.entities.Item;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface ItemService extends BaseService<Item, ItemDTO, Long> {
-    Page<ItemDTO> findAllPaged(Pageable pageable) throws Exception;
-    List<ItemDTO> findAllUnlocked() throws Exception;
-    Page<ItemDTO> findAllUnlocked(Pageable pageable) throws Exception;
+public interface ItemService {
+    List<ItemDTO> findAll() throws Exception;
+    List<ItemSimpleDTO> findAllUnlocked() throws Exception;
     List<ItemRankingDTO> findTop5SellingItems() throws Exception;
-    Item blockUnblock(Long id) throws Exception;
+    ItemDTO findById(Long id) throws Exception;
+    ItemDTO save(ItemRequestDTO dto) throws Exception;
+    ItemDTO update(Long id, ItemRequestDTO dto) throws Exception;
+    ItemDTO updateStock(Long id, Integer stock) throws Exception;
+    ItemDTO lockUnlock(Long id) throws Exception;
+    void delete(Long id) throws Exception;
 }

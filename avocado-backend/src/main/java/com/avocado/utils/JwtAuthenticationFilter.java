@@ -20,7 +20,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtService jwtService;
+    private JwtUtil jwtUtil;
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -40,12 +40,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         final String token = header.substring(7);
-        final String username = jwtService.getUsername(token);
+        final String username = jwtUtil.getUsername(token);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-            Boolean isTokenValid = jwtService.verifyToken(token, userDetails);
+            Boolean isTokenValid = jwtUtil.verifyToken(token, userDetails);
 
             if (isTokenValid) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(

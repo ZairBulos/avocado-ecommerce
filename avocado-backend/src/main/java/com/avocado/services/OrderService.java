@@ -1,14 +1,14 @@
 package com.avocado.services;
 
-import com.avocado.dtos.OrderDTO;
-import com.avocado.entities.Order;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.avocado.dtos.order.OrderDTO;
+import com.avocado.dtos.order.OrderRequestDTO;
 
 import java.util.List;
 
-public interface OrderService extends BaseService<Order, OrderDTO, Long> {
-    Page<OrderDTO> findAllPaged(Pageable pageable) throws Exception;
-    List<OrderDTO> findAllByUserId(Long userId) throws Exception;
-    Page<OrderDTO> findAllByUserId(Long userId, Pageable pageable) throws Exception;
+public interface OrderService {
+    List<OrderDTO> findAll() throws Exception;
+    List<OrderDTO> findAllByUser(Long userId) throws Exception;
+    OrderDTO findById(Long id) throws Exception;
+    OrderDTO save(OrderRequestDTO dto) throws Exception;
+    void delete(Long id) throws Exception;
 }

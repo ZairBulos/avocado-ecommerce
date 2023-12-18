@@ -1,12 +1,12 @@
 package com.avocado.services.impl;
 
-import com.avocado.dtos.LoginDTO;
-import com.avocado.dtos.UserDTO;
+import com.avocado.dtos.auth.AuthDTO;
+import com.avocado.dtos.auth.TokenDTO;
 import com.avocado.entities.User;
 import com.avocado.repositories.UserRepository;
 import com.avocado.services.AuthService;
-import com.avocado.services.UserService;
-import com.avocado.utils.JwtService;
+import com.avocado.utils.JwtUtil;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,40 +16,48 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 
     @Autowired
-    private JwtService jwtService;
+    private JwtUtil jwtService;
 
     @Autowired
-    private UserService userService;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private UserServiceImpl userService;
 
     @Override
-    public String login(LoginDTO dto) throws Exception {
+    public TokenDTO login(AuthDTO dto) throws Exception {
         try {
-             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                     dto.getEmail(),
-                     dto.getPassword()
-             ));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    dto.getEmail(),
+                    dto.getPassword()
+            ));
 
-            User user = userRepository.findByEmail(dto.getEmail()).orElseThrow(
-                    () -> new Exception("User with email " + dto.getEmail() + " not found")
-            );
+            User user = userRepository.findByEmail(dto.getEmail())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + dto.getEmail()));
 
-            return jwtService.generateToken(user);
+            TokenDTO token = new TokenDTO();
+            token.setAccessToken(jwtService.generateToken(user));
+
+            return token;
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
     @Override
-    public String register(UserDTO dto) throws Exception {
+    public TokenDTO register(AuthDTO dto) throws Exception {
         try {
             User user = userService.save(dto);
-            return jwtService.generateToken(user);
+
+            TokenDTO token = new TokenDTO();
+            token.setAccessToken(jwtService.generateToken(user));
+
+            return token;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

@@ -1,6 +1,6 @@
 package com.avocado.enums;
 
-public enum RoleUser {
+public enum UserRole {
     ADMIN,
     CLIENT
 }

@@ -1,10 +1,10 @@
 package com.avocado.services;
 
-import com.avocado.dtos.LoginDTO;
-import com.avocado.dtos.UserDTO;
+import com.avocado.dtos.auth.AuthDTO;
+import com.avocado.dtos.auth.TokenDTO;
 
 public interface AuthService {
 
-    String login(LoginDTO dto) throws Exception;
-    String register(UserDTO dto) throws Exception;
+    TokenDTO login(AuthDTO dto) throws Exception;
+    TokenDTO register(AuthDTO dto) throws Exception;
 }

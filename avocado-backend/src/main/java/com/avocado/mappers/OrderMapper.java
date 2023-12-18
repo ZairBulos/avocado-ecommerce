@@ -1,24 +1,32 @@
 package com.avocado.mappers;
 
-import com.avocado.dtos.OrderDTO;
+import com.avocado.dtos.order.OrderDTO;
+import com.avocado.dtos.order.OrderRequestDTO;
 import com.avocado.entities.Order;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring")
-public interface OrderMapper extends BaseMapper<Order, OrderDTO> {
+import java.util.List;
+
+@Mapper(
+        componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE
+)
+public interface OrderMapper {
 
     static OrderMapper getInstance() {
         return Mappers.getMapper(OrderMapper.class);
     }
 
-    @Override
-    @Mapping(target = "userId", source = "source.user.id")
-    @Mapping(target = "userEmail", source = "source.user.email")
+    @Named("toEntity")
+    @Mapping(target = "user.id", source = "source.userId")
+    Order toEntity(OrderRequestDTO source);
+
+    @Named("toDTO")
+    @Mapping(target = "user", source = "source.user.email")
     OrderDTO toDTO(Order source);
 
-    @Override
-    @Mapping(target = "user.id", source = "source.userId")
-    Order toEntity(OrderDTO source);
+    @Named("toDTOsList")
+    @IterableMapping(qualifiedByName = "toDTO")
+    List<OrderDTO> toDTOsList(List<Order> source);
 }

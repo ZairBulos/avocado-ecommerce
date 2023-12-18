@@ -1,5 +1,7 @@
-package com.avocado.dtos;
+package com.avocado.dtos.order;
 
+import com.avocado.dtos.BaseDTO;
+import com.avocado.dtos.item.ItemDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -8,6 +10,5 @@ import lombok.EqualsAndHashCode;
 public class OrderDetailDTO extends BaseDTO {
     private Integer quantity;
     private Double unitPrice;
-    private Long itemId;
     private ItemDTO item;
 }

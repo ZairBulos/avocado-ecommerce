@@ -1,13 +1,10 @@
 package com.avocado.services.impl;
 
-import com.avocado.dtos.LoginDTO;
-import com.avocado.dtos.UserDTO;
+import com.avocado.dtos.auth.AuthDTO;
 import com.avocado.dtos.ranking.UserRankingDTO;
 import com.avocado.entities.User;
-import com.avocado.enums.RoleUser;
-import com.avocado.mappers.BaseMapper;
+import com.avocado.enums.UserRole;
 import com.avocado.mappers.UserMapper;
-import com.avocado.repositories.BaseRepository;
 import com.avocado.repositories.UserRepository;
 import com.avocado.services.UserService;
 import jakarta.persistence.EntityManager;
@@ -22,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UserServiceImpl extends BaseServiceImpl<User, UserDTO, Long> implements UserService {
+public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
@@ -34,37 +31,6 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserDTO, Long> implem
     private PasswordEncoder passwordEncoder;
 
     private final UserMapper userMapper = UserMapper.getInstance();
-
-    public UserServiceImpl(BaseRepository<User, Long> baseRepository, BaseMapper<User, UserDTO> baseMapper) {
-        super(baseRepository, baseMapper);
-    }
-
-    @Override
-    public Long countUsersRegisteredInMonth(Integer year, Integer month) throws Exception {
-        try {
-            if (year == null) year = Year.now().getValue();
-            if (month == null) month = MonthDay.now().getMonthValue();
-
-            return userRepository.countUsersRegisteredInMonth(year, month);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    @Override
-    public Long countUsersRegisteredBetweenDates(LocalDate startDate, LocalDate endDate) throws Exception {
-        try {
-            if (startDate == null) startDate = LocalDate.now();
-            if (endDate == null) endDate = LocalDate.now();
-
-            LocalDateTime startDateTime = startDate.atStartOfDay();
-            LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
-
-            return userRepository.countUsersRegisteredBetweenDates(startDateTime, endDateTime);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
 
     @Override
     public List<UserRankingDTO> findTop5UsersWithMostOrders() throws Exception {
@@ -100,11 +66,38 @@ public class UserServiceImpl extends BaseServiceImpl<User, UserDTO, Long> implem
     }
 
     @Override
+    public Long countUsersRegisteredInMonth(Integer year, Integer month) throws Exception {
+        try {
+            if (year == null) year = Year.now().getValue();
+            if (month == null) month = MonthDay.now().getMonthValue();
+
+            return userRepository.countUsersRegisteredInMonth(year, month);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public Long countUsersRegisteredBetweenDates(LocalDate startDate, LocalDate endDate) throws Exception {
+        try {
+            if (startDate == null) startDate = LocalDate.now();
+            if (endDate == null) endDate = LocalDate.now();
+
+            LocalDateTime startDateTime = startDate.atStartOfDay();
+            LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+
+            return userRepository.countUsersRegisteredBetweenDates(startDateTime, endDateTime);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
     @Transactional
-    public User save(UserDTO dto) throws Exception {
+    public User save(AuthDTO dto) throws Exception {
         try {
             User user = userMapper.toEntity(dto);
-            user.setRole(RoleUser.CLIENT);
+            user.setRole(UserRole.CLIENT);
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
             return userRepository.save(user);

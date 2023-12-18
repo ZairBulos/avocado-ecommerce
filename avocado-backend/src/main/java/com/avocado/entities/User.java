@@ -1,6 +1,6 @@
 package com.avocado.entities;
 
-import com.avocado.enums.RoleUser;
+import com.avocado.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,16 +33,16 @@ public class User extends Base implements UserDetails {
 
     @NotNull
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
-    private RoleUser role;
+    private UserRole role;
 
     @PrePersist
     private void onCreate() {
-        createdAt = LocalDateTime.now();
+        createdAt = LocalDate.now();
     }
 
     @Override

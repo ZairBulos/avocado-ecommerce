@@ -5,5 +5,6 @@ public enum ItemShape {
     PEAR,
     ROUND,
     PLUMP,
-    LONG_PEAR
+    OBOVATE,
+    LONG_PEAR,
 }

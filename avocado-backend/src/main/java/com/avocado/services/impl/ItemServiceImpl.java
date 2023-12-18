@@ -1,9 +1,10 @@
 package com.avocado.services.impl;
 
-import com.avocado.dtos.ItemDTO;
+import com.avocado.dtos.item.ItemDTO;
+import com.avocado.dtos.item.ItemRequestDTO;
+import com.avocado.dtos.item.ItemSimpleDTO;
 import com.avocado.dtos.ranking.ItemRankingDTO;
 import com.avocado.entities.*;
-import com.avocado.mappers.BaseMapper;
 import com.avocado.mappers.ItemAttributesMapper;
 import com.avocado.mappers.ItemMapper;
 import com.avocado.repositories.*;
@@ -13,32 +14,28 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implements ItemService {
+public class ItemServiceImpl implements ItemService {
 
     @Autowired
     private ItemRepository itemRepository;
 
     @Autowired
-    private ItemImageRepository itemImageRepository;
+    private ItemAttributesRepository itemAttributesRepository;
 
     @Autowired
-    private ItemStockRepository itemStockRepository;
+    private ItemImageRepository itemImageRepository;
 
     @Autowired
     private ItemSellPriceRepository itemSellPriceRepository;
 
     @Autowired
-    private ItemAttributesRepository itemAttributesRepository;
+    private ItemStockRepository itemStockRepository;
 
     @Autowired
     private EntityManager entityManager;
@@ -47,17 +44,13 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
 
     private final ItemAttributesMapper itemAttributesMapper = ItemAttributesMapper.getInstance();
 
-    public ItemServiceImpl(BaseRepository<Item, Long> baseRepository, BaseMapper<Item, ItemDTO> baseMapper) {
-        super(baseRepository, baseMapper);
-    }
-
     @Override
     public List<ItemDTO> findAll() throws Exception {
         try {
-            List<Item> entities = itemRepository.findAll();
-            List<ItemDTO> dtos = new ArrayList<>();
+            List<Item> items = itemRepository.findAll();
+            List<ItemDTO> itemDTOs = new ArrayList<>();
 
-            for (Item item : entities) {
+            for (Item item : items) {
                 ItemDTO dto = itemMapper.toDTO(item);
 
                 ItemImage image = itemImageRepository.findByItem_Id(item.getId());
@@ -70,94 +63,34 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
                 dto.setCurrentStock(currentStock);
                 dto.setAttributes(itemAttributesMapper.toDTO(attributes));
 
-                dtos.add(dto);
+                itemDTOs.add(dto);
             }
 
-            return dtos;
+            return itemDTOs;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
     }
 
     @Override
-    public Page<ItemDTO> findAllPaged(Pageable pageable) throws Exception {
+    public List<ItemSimpleDTO> findAllUnlocked() throws Exception {
         try {
-            Page<Item> pageables = itemRepository.findAll(pageable);
-            List<ItemDTO> dtos = new ArrayList<>();
+            List<Item> items = itemRepository.findAllByBlockedFalse();
+            List<ItemSimpleDTO> itemSimpleDTOs = new ArrayList<>();
 
-            for (Item item : pageables) {
-                ItemDTO dto = itemMapper.toDTO(item);
+            for (Item item : items) {
+                ItemSimpleDTO dto = itemMapper.toSimpleDTO(item);
 
                 ItemImage image = itemImageRepository.findByItem_Id(item.getId());
-                Integer currentStock = itemStockRepository.findCurrentStockByItemId(item.getId());
                 Double sellPrice = itemSellPriceRepository.findLastSellPriceByItemId(item.getId());
-                ItemAttributes attributes = itemAttributesRepository.findByItem_Id(item.getId());
 
                 dto.setImage(image.getImage());
                 dto.setSellPrice(sellPrice);
-                dto.setCurrentStock(currentStock);
-                dto.setAttributes(itemAttributesMapper.toDTO(attributes));
 
-                dtos.add(dto);
+                itemSimpleDTOs.add(dto);
             }
 
-            return new PageImpl<>(dtos, pageable, pageables.getTotalElements());
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    @Override
-    public List<ItemDTO> findAllUnlocked() throws Exception {
-        try {
-            List<Item> entities = itemRepository.findAllByBlockedFalse();
-            List<ItemDTO> dtos = new ArrayList<>();
-
-            for (Item item : entities) {
-                ItemDTO dto = itemMapper.toDTO(item);
-
-                ItemImage image = itemImageRepository.findByItem_Id(item.getId());
-                Integer currentStock = itemStockRepository.findCurrentStockByItemId(item.getId());
-                Double sellPrice = itemSellPriceRepository.findLastSellPriceByItemId(item.getId());
-                ItemAttributes attributes = itemAttributesRepository.findByItem_Id(item.getId());
-
-                dto.setImage(image.getImage());
-                dto.setSellPrice(sellPrice);
-                dto.setCurrentStock(currentStock);
-                dto.setAttributes(itemAttributesMapper.toDTO(attributes));
-
-                dtos.add(dto);
-            }
-
-            return dtos;
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    @Override
-    public Page<ItemDTO> findAllUnlocked(Pageable pageable) throws Exception {
-        try {
-            Page<Item> pageables = itemRepository.findAllByBlockedFalse(pageable);
-            List<ItemDTO> dtos = new ArrayList<>();
-
-            for (Item item : pageables) {
-                ItemDTO dto = itemMapper.toDTO(item);
-
-                ItemImage image = itemImageRepository.findByItem_Id(item.getId());
-                Integer currentStock = itemStockRepository.findCurrentStockByItemId(item.getId());
-                Double sellPrice = itemSellPriceRepository.findLastSellPriceByItemId(item.getId());
-                ItemAttributes attributes = itemAttributesRepository.findByItem_Id(item.getId());
-
-                dto.setImage(image.getImage());
-                dto.setSellPrice(sellPrice);
-                dto.setCurrentStock(currentStock);
-                dto.setAttributes(itemAttributesMapper.toDTO(attributes));
-
-                dtos.add(dto);
-            }
-
-            return new PageImpl<>(dtos, pageable, pageables.getTotalElements());
+            return itemSimpleDTOs;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -202,19 +135,19 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
         try {
             Item item = itemRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Item not found with id: " + id));
-            ItemDTO dto = itemMapper.toDTO(item);
+            ItemDTO itemDTO = itemMapper.toDTO(item);
 
             ItemImage image = itemImageRepository.findByItem_Id(id);
             Integer currentStock = itemStockRepository.findCurrentStockByItemId(id);
             Double sellPrice = itemSellPriceRepository.findLastSellPriceByItemId(id);
             ItemAttributes attributes = itemAttributesRepository.findByItem_Id(id);
 
-            dto.setImage(image.getImage());
-            dto.setSellPrice(sellPrice);
-            dto.setCurrentStock(currentStock);
-            dto.setAttributes(itemAttributesMapper.toDTO(attributes));
+            itemDTO.setImage(image.getImage());
+            itemDTO.setSellPrice(sellPrice);
+            itemDTO.setCurrentStock(currentStock);
+            itemDTO.setAttributes(itemAttributesMapper.toDTO(attributes));
 
-            return dto;
+            return itemDTO;
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
@@ -224,33 +157,38 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
 
     @Override
     @Transactional
-    public Item save(ItemDTO dto) throws Exception {
+    public ItemDTO save(ItemRequestDTO dto) throws Exception {
         try {
-            Item item = itemRepository.save(itemMapper.toEntity(dto));
+            Item item = itemMapper.toEntity(dto);
+            item.setBlocked(false);
+
+            item = itemRepository.save(item);
 
             // Image
-            ItemImage itemImage = new ItemImage();
-            itemImage.setImage(dto.getImage());
-            itemImage.setItem(item);
+            ItemImage itemImage = new ItemImage(dto.getImage(), item);
+
+            itemImageRepository.save(itemImage);
 
             // Attributes
-            ItemAttributes itemAttributes = itemAttributesMapper.toEntity(dto.getAttributes());
-            itemAttributes.setItem(item);
+            ItemAttributes itemAttributes = new ItemAttributes(dto.getShape(), dto.getTaste(), dto.getHardiness(), item);
+
             itemAttributesRepository.save(itemAttributes);
 
             // SellPrice
             ItemSellPrice itemSellPrice = new ItemSellPrice();
             itemSellPrice.setSellPrice(dto.getSellPrice());
             itemSellPrice.setItem(item);
+
             itemSellPriceRepository.save(itemSellPrice);
 
             // CurrentStock
             ItemStock itemStock = new ItemStock();
             itemStock.setCurrentStock(dto.getCurrentStock());
             itemStock.setItem(item);
+
             itemStockRepository.save(itemStock);
 
-            return item;
+            return findById(item.getId());
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -258,29 +196,31 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
 
     @Override
     @Transactional
-    public Item update(Long id, ItemDTO dto) throws Exception {
+    public ItemDTO update(Long id, ItemRequestDTO dto) throws Exception {
         try {
             Item item = itemRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Item not found with id: " + id));
 
             // Item
             item.setName(dto.getName());
-            item.setBlocked(dto.getBlocked());
             item.setDescription(dto.getDescription());
+
             itemRepository.save(item);
 
             // Image
             ItemImage itemImage = itemImageRepository.findByItem_Id(id);
             if (!itemImage.getImage().equals(dto.getImage())) {
                 itemImage.setImage(dto.getImage());
+
                 itemImageRepository.save(itemImage);
             }
 
             // Attributes
             ItemAttributes itemAttributes = itemAttributesRepository.findByItem_Id(id);
-            itemAttributes.setShape(dto.getAttributes().getShape());
-            itemAttributes.setTaste(dto.getAttributes().getTaste());
-            itemAttributes.setHardiness(dto.getAttributes().getHardiness());
+            itemAttributes.setShape(dto.getShape());
+            itemAttributes.setTaste(dto.getTaste());
+            itemAttributes.setHardiness(dto.getHardiness());
+
             itemAttributesRepository.save(itemAttributes);
 
             // SellPrice
@@ -289,6 +229,7 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
                 ItemSellPrice itemSellPrice = new ItemSellPrice();
                 itemSellPrice.setSellPrice(dto.getSellPrice());
                 itemSellPrice.setItem(item);
+
                 itemSellPriceRepository.save(itemSellPrice);
             }
 
@@ -298,10 +239,11 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
                 ItemStock itemStock = new ItemStock();
                 itemStock.setCurrentStock(dto.getCurrentStock());
                 itemStock.setItem(item);
+
                 itemStockRepository.save(itemStock);
             }
 
-            return item;
+            return findById(item.getId());
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
@@ -311,14 +253,41 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
 
     @Override
     @Transactional
-    public Item blockUnblock(Long id) throws Exception {
+    public ItemDTO updateStock(Long id, Integer stock) throws Exception {
+        try {
+            Item item = itemRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Item not found with id: " + id));
+
+            // CurrentStock
+            Integer latestCurrentStock = itemStockRepository.findCurrentStockByItemId(id);
+            Integer currentStock = latestCurrentStock + stock;
+
+            ItemStock itemStock = new ItemStock();
+            itemStock.setCurrentStock(currentStock);
+            itemStock.setItem(item);
+
+            itemStockRepository.save(itemStock);
+
+            return findById(id);
+        } catch (
+                EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        } catch (
+                Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public ItemDTO lockUnlock(Long id) throws Exception {
         try {
             Item item = itemRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Item not found with id: " + id));
 
             item.setBlocked(!item.getBlocked());
 
-            return itemRepository.save(item);
+            return findById(item.getId());
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
         } catch (Exception e) {
@@ -330,11 +299,8 @@ public class ItemServiceImpl extends BaseServiceImpl<Item, ItemDTO, Long> implem
     @Transactional
     public void delete(Long id) throws Exception {
         try {
-            Optional<Item> optional = itemRepository.findById(id);
-
-            if (optional.isEmpty()) {
-                throw new EntityNotFoundException("Item not found with id: " + id);
-            }
+            Item item = itemRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException("Item not found with id: " + id));
 
             // Image
             itemImageRepository.deleteByItem_Id(id);
