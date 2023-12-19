@@ -2,6 +2,7 @@ import { lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import Home from "../pages/Home";
+const Items = lazy(() => import("../pages/Items"));
 const ItemDetail = lazy(() => import("../pages/ItemDetail"));
 const SignIn = lazy(() => import("../components/SignIn/SignIn"));
 const SignUp = lazy(() => import("../components/SignUp/SignUp"));
@@ -12,6 +13,7 @@ function IndexRoute() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/products" element={<Items />} />
       <Route path="/items">
         <Route path=":id" element={<ItemDetail />} />
       </Route>
