@@ -8,7 +8,7 @@ function Items() {
   return (
     <main>
       {loading ? (
-        <Loader label="Loading..." color="success" labelColor="success" />
+        <Loader />
       ) : (
         <ItemList items={items} />
       )}

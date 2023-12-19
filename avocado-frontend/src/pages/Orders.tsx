@@ -9,7 +9,7 @@ function Orders() {
   return (
     <main>
       {loading ? (
-        <Loader label="Loading..." color="success" labelColor="success" />
+        <Loader />
       ) : (
         <section className="mx-auto py-8 px-8 lg:px-40">
           <h1 className="text-2xl font-bold mb-8">Purchase History</h1>

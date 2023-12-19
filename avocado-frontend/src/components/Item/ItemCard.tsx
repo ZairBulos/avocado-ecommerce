@@ -1,27 +1,23 @@
-import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
-import { ItemSimple } from "../../types/Item";
 import { Link } from "react-router-dom";
+import { ItemSimple } from "../../types/Item";
 
 function ItemCard({ item }: { item: ItemSimple }) {
   return (
-    <Card shadow="sm" isPressable className="rounded-none">
-      <Link to={`/products/${item.id}`}>
-        <CardBody className="overflow-visible p-0">
-          <Image
+    <div role="listitem" className="border border-md shadow-md overflow-hidden">
+      <div className="overflow-visible p-0">
+        <Link to={`/products/${item.id}`}>
+          <img
             src={item.image}
             alt={item.name}
-            radius="lg"
-            width="100%"
-            className="object-cover hover:scale-105"
-            style={{ maxWidth: "300px", maxHeight: "300px", margin: "auto" }}
+            className="mx-auto object-cover hover:scale-105"
           />
-        </CardBody>
-        <CardFooter className="justify-between">
-          <b>{item.name}</b>
-          <p>${item.sellPrice}</p>
-        </CardFooter>
-      </Link>
-    </Card>
+        </Link>
+      </div>
+      <div className="flex justify-between p-4">
+        <h2 className="font-bold">{item.name}</h2>
+        <p>${item.sellPrice}</p>
+      </div>
+    </div>
   );
 }
 
