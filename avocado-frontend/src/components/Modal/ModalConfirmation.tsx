@@ -21,7 +21,7 @@ function ModalConfirmation({
   onAction: () => void;
 }) {
   return (
-    <Modal backdrop="blur" isOpen={isOpen} onClose={onClose}>
+    <Modal backdrop="blur" placement="top-center" isOpen={isOpen} onClose={onClose}>
       <ModalContent>
         {(onClose) => (
           <>
