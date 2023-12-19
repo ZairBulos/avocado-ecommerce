@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 function ItemCard({ item }: { item: ItemSimple }) {
   return (
     <Card shadow="sm" isPressable className="rounded-none">
-      <Link to={`/items/${item.id}`}>
+      <Link to={`/products/${item.id}`}>
         <CardBody className="overflow-visible p-0">
           <Image
             src={item.image}
