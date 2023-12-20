@@ -15,7 +15,7 @@ const NotFound = lazy(() => import("../pages/NotFound"));
 
 const Orders = lazy(() => import("../pages/Orders"));
 
-const AdminRoute = lazy(() => import("./AdminRoute"));
+const Dashboard = lazy(() => import("../components/Dashboard/Dashboard"));
 
 function IndexRoute() {
   return (
@@ -47,7 +47,7 @@ function IndexRoute() {
         path="/dashboard"
         element={
           <ProtectedRoute role={UserRole.ADMIN}>
-            <AdminRoute />
+            <Dashboard />
           </ProtectedRoute>
         }
       />
