@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+
 import CartEmpty from "../components/Cart/CartEmpty";
 import CartFooter from "../components/Cart/CartFooter";
 import CartTable from "../components/Cart/CartTable";
@@ -6,8 +7,8 @@ import { useAuthContext } from "../context/AuthContext";
 import { useCartContext } from "../context/CartContext";
 import { useCreateOrder } from "../hooks/useCreateOrder";
 import { toastError, toastSuccess } from "../utils/TostifyUtil";
-import { useModal } from "../hooks/useModal";
 import ModalConfirmation from "../components/Modal/ModalConfirmation";
+import { useBoolean } from "../hooks/useBoolean";
 
 function Cart() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function Cart() {
   const { user } = useAuthContext();
   const { items, getCartTotal, clearCart } = useCartContext();
 
-  const { isOpen, onToggle } = useModal();
+  const { isTrue: isOpen, onToggle } = useBoolean();
   const { createOrder } = useCreateOrder();
 
   const handleCheckOut = async () => {

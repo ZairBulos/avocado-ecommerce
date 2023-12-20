@@ -1,9 +1,9 @@
-import { useModal } from "../../hooks/useModal";
 import { Order } from "../../types/Order";
+import { useBoolean } from "../../hooks/useBoolean";
 import ModalOrderDetail from "../Modal/ModalOrderDetail";
 
 function OrderItem({ order }: { order: Order }) {
-  const { isOpen, onToggle } = useModal();
+  const { isTrue: isOpen, onToggle } = useBoolean();
 
   return (
     <>

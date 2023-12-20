@@ -1,11 +1,12 @@
-import BasketIcon from "../../assets/basket";
 import { Link } from "react-router-dom";
+
+import BasketIcon from "../../assets/basket";
 import { useCartContext } from "../../context/CartContext";
-import { useDropdown } from "../../hooks/useDropdown";
+import { useBoolean } from "../../hooks/useBoolean";
 
 function CartDropdown() {
-  const { isOpen, toggleDropdown } = useDropdown();
   const { items, getCartTotal } = useCartContext();
+  const { isTrue: isOpen, onToggle: toggleDropdown } = useBoolean();
 
   const totalUnitsInCart = items.reduce(
     (total, item) => total + item.quantity,

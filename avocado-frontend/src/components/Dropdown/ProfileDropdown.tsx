@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import { useAuthContext } from "../../context/AuthContext";
 import { useLogOut } from "../../hooks/useLogOut";
-import { useDropdown } from "../../hooks/useDropdown";
+import { useBoolean } from "../../hooks/useBoolean";
 import UserIcon from "../../assets/user";
 import LoginIcon from "../../assets/login";
 import UserFilledIcon from "../../assets/user-filled";
@@ -12,7 +12,7 @@ import LayoutDashboardIcon from "../../assets/layout-dashboard";
 function ProfileDropdown() {
   const { user } = useAuthContext();
   const { handleLogOut } = useLogOut();
-  const { isOpen, toggleDropdown } = useDropdown();
+  const { isTrue: isOpen, onToggle: toggleDropdown } = useBoolean();
 
   const commonBlock = (
     <li className="block px-4 py-2 border-b hover:bg-gray-100">
