@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 
 import { Item } from "../types/Item";
-import { useBoolean } from "./useBoolean";
 import { useLocalStorage } from "./useLocalStorage";
 import ItemService from "../services/ItemService";
 
 export const useProducts = () => {
   const { getItemFromLS } = useLocalStorage();
   const [items, setItems] = useState<Item[]>([]);
+  const [reload, setReload] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const { isTrue: reload, onToggle: onReload } = useBoolean();
 
   useEffect(() => {
     fetchItems();
@@ -28,6 +27,10 @@ export const useProducts = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const onReload = () => {
+    setReload((prevReload) => !prevReload);
   };
 
   return {

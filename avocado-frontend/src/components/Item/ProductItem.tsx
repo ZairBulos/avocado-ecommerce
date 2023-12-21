@@ -6,10 +6,12 @@ import { Item } from "../../types/Item";
 import { useBoolean } from "../../hooks/useBoolean";
 import { useLockUnlockItem } from "../../hooks/useLockUnlockItem";
 import { toastError, toastSuccess } from "../../utils/TostifyUtil";
-import ModalConfirmation from "../Modal/ModalConfirmation";
+import ConfirmationModal from "../Modal/ConfirmationModal";
+import ItemFormModal from "../Modal/ItemFormModal";
 
 function ProductItem({ item, onReload }: { item: Item; onReload: () => void }) {
-  const { isTrue, onToggle } = useBoolean();
+  const { isTrue: isOpenConfirmation, onToggle: toggleConfirmation } = useBoolean();
+  const { isTrue: isOpenForm, onToggle: toggleForm } = useBoolean();
   const { onLockUnlock } = useLockUnlockItem();
 
   const bgStatusColor = () => {
@@ -50,6 +52,7 @@ function ProductItem({ item, onReload }: { item: Item; onReload: () => void }) {
         </td>
         <td scope="row" className="px-6 py-3">
           <button
+            onClick={() => toggleForm()}
             aria-label="edit-item"
           >
             <EditIcon width="18" height="18" />
@@ -57,7 +60,7 @@ function ProductItem({ item, onReload }: { item: Item; onReload: () => void }) {
         </td>
         <td scope="row" className="px-6 py-3">
           <button 
-            onClick={() => onToggle()}
+            onClick={() => toggleConfirmation()}
             aria-label="lock-unlock-item"
           >
             {item.blocked ? (
@@ -69,18 +72,24 @@ function ProductItem({ item, onReload }: { item: Item; onReload: () => void }) {
         </td>
       </tr>
 
-      <ModalConfirmation
+      <ItemFormModal 
+        isOpen={isOpenForm}
+        onClose={toggleForm}
+        onReload={onReload}
+        item={item}
+      />
+
+      <ConfirmationModal
         title="LockUnlock Product"
-        isOpen={isTrue}
+        isOpen={isOpenConfirmation}
         onAction={handleLockUnlock}
-        onClose={onToggle}
+        onClose={toggleConfirmation}
       >
         <p>
-          Are you sure you want to <b>{item.blocked ? "unlock" : "lock"}</b> the
-          product <b>"{item.name}"</b>?
+          Are you sure you want to <b>{item.blocked ? "unlock" : "lock"}</b> the product <b>"{item.name}"</b>?
         </p>
         <img src={item.image} alt={item.name} className="h-32 mx-auto" />
-      </ModalConfirmation>
+      </ConfirmationModal>
     </>
   );
 }

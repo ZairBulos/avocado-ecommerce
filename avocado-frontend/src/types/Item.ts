@@ -17,12 +17,12 @@ export interface ItemAttributes extends Base {
 }
 
 export enum ItemShape {
-  OVAL = "Oval",
-  PEAR = "Pear",
-  ROUND = "Round",
-  PLUMP = "Plump",
-  OBOVATE = "Obovate",
-  LONG_PEAR = "Long pear",
+  OVAL = "OVAL",
+  PEAR = "PEAR",
+  ROUND = "ROUND",
+  PLUMP = "PLUMP",
+  OBOVATE = "OBOVATE",
+  LONG_PEAR = "LONG_PEAR",
 }
 
 export interface ItemSimple extends Base {
@@ -32,6 +32,7 @@ export interface ItemSimple extends Base {
 }
 
 export interface ItemRequest {
+  id?: number;
   name: string;
   description: string;
   image: string;
