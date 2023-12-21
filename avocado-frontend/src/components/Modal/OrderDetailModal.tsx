@@ -1,7 +1,7 @@
 import { Order } from "../../types/Order";
 import CloseIcon from "../../assets/close";
 
-function ModalOrderDetail({
+function OrderDetailModal({
   isOpen,
   title,
   order,
@@ -21,15 +21,15 @@ function ModalOrderDetail({
     >
       <div className="relative p-4 w-full max-w-2xl max-h-full">
         {/* Modal content */}
-        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+        <div className="relative bg-white rounded-lg shadow">
           {/* Modal header */}
-          <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+          <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+            <h3 className="text-xl font-semibold text-gray-900">
               {title}
             </h3>
             <button
               type="button"
-              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
               onClick={onClose}
             >
               <CloseIcon />
@@ -37,7 +37,7 @@ function ModalOrderDetail({
             </button>
           </div>
           
-          {/* Modal Nody */}
+          {/* Modal Body */}
           <div className="p-4 md:p-5 space-y-4">
             {order.orderDetails.map(orderDetail =>
               <p key={orderDetail.id}>
@@ -51,4 +51,4 @@ function ModalOrderDetail({
   );
 }
 
-export default ModalOrderDetail;
+export default OrderDetailModal;

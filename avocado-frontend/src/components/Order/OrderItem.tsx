@@ -1,6 +1,6 @@
 import { Order } from "../../types/Order";
 import { useBoolean } from "../../hooks/useBoolean";
-import ModalOrderDetail from "../Modal/ModalOrderDetail";
+import OrderDetailModal from "../Modal/OrderDetailModal";
 
 function OrderItem({ order }: { order: Order }) {
   const { isTrue: isOpen, onToggle } = useBoolean();
@@ -20,7 +20,7 @@ function OrderItem({ order }: { order: Order }) {
           </button>
         </td>
       </tr>
-      <ModalOrderDetail
+      <OrderDetailModal
         isOpen={isOpen}
         title="Order Details"
         order={order}

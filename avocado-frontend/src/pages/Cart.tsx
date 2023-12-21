@@ -7,7 +7,7 @@ import { useAuthContext } from "../context/AuthContext";
 import { useCartContext } from "../context/CartContext";
 import { useCreateOrder } from "../hooks/useCreateOrder";
 import { toastError, toastSuccess } from "../utils/TostifyUtil";
-import ModalConfirmation from "../components/Modal/ModalConfirmation";
+import ConfirmationModal from "../components/Modal/ConfirmationModal";
 import { useBoolean } from "../hooks/useBoolean";
 
 function Cart() {
@@ -42,14 +42,14 @@ function Cart() {
       <section className="mx-auto pb-8 px-8 lg:px-40">
         <CartFooter total={getCartTotal()} onCheckOut={onToggle} />
       </section>
-      <ModalConfirmation
+      <ConfirmationModal
         isOpen={isOpen}
         title="Confirm Order"
         onAction={handleCheckOut}
         onClose={onToggle}
       >
         <p>Are you sure you want to place the order?</p>
-      </ModalConfirmation>
+      </ConfirmationModal>
     </main>
   );
 }
