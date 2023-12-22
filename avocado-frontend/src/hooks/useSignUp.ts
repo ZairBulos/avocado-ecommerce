@@ -1,18 +1,22 @@
+import { useState } from "react";
 import { useFormik } from "formik";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useAuthContext } from "../context/AuthContext";
 import { userSchema } from "../schemas/userSchema";
 import AuthService from "../services/AuthService";
 import { Auth } from "../types/Auth";
 
-export const useSignUp = () => {
-  const initialValues = {
+const initialValues = {
     email: "",
     password: "",
     confirmPassword: "",
   };
+
+export const useSignUp = () => {
+  const [error, setError] = useState<boolean>(false);
   const { login } = useAuthContext();
+  const location = useLocation();
   const navigate = useNavigate();
 
   const formik = useFormik({
@@ -20,21 +24,25 @@ export const useSignUp = () => {
     validationSchema: userSchema(),
     validateOnChange: true,
     validateOnBlur: true,
-    onSubmit: (entity: Auth) => handleSubmit(entity),
+    onSubmit: (entity: Auth) => onSubmit(entity),
   });
 
-  const handleSubmit = async (user: Auth) => {
+  const onSubmit = async (user: Auth) => {
     try {
+      setError(false);
+      
       const token = await AuthService.register(user);
       login(token.accessToken);
 
-      navigate("/");
+      const from = (location.state && location.state.from) || "/";
+      navigate(from);
     } catch (error) {
-      console.log(error);
+      setError(true);
     }
   };
 
   return {
     formik,
+    error
   };
 };
