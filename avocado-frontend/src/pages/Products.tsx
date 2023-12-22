@@ -15,7 +15,7 @@ function Products() {
         <Loader />
       ) : (
         <>
-          <section>
+          <section className="pt-8">
             <div className="flex space-x-4 items-center mb-4">
               <h1 className="text-2xl font-bold">Products</h1>
               <button

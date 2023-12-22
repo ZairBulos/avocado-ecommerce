@@ -10,7 +10,7 @@ function ProductTable({
 }) {
   return (
     <div className="overflow-y-auto max-h-[500px]">
-      <table className="w-full text-left">
+      <table className="w-full text-left bg-white">
         <thead className="bg-black text-white text-xs uppercase">
           <tr>
             <th scope="col" className="px-6 py-3">
