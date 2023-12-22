@@ -1,6 +1,8 @@
 import { useState } from "react";
-import Products from "../../pages/Products";
+
 import Sidebar from "../Sidebar/Sidebar";
+import Products from "../../pages/Products";
+import Statistics from "../../pages/Statistics";
 
 function Dashboard() {
   const [currentComponent, setCurrentComponent] = useState<string>("Products");
@@ -15,7 +17,7 @@ function Dashboard() {
 
       <div className="mx-auto">
         {currentComponent === 'Products' && <Products />}
-        {currentComponent === 'Statisics' && <h1>Statisics</h1>}
+        {currentComponent === 'Statistics' && <Statistics />}
       </div>
     </div>
   );
