@@ -1,6 +1,6 @@
-import ItemList from "../components/Item/ItemList";
-import Loader from "../components/Loader/Loader";
 import { useItems } from "../hooks/useItems";
+import Loader from "../components/Loader/Loader";
+import ItemList from "../components/Item/ItemList";
 
 function Items() {
   const { items, loading } = useItems();
@@ -10,7 +10,9 @@ function Items() {
       {loading ? (
         <Loader />
       ) : (
-        <ItemList items={items} />
+        <section>
+          <ItemList items={items} />
+        </section>
       )}
     </main>
   );
