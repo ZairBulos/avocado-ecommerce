@@ -1,15 +1,14 @@
+import { Item } from "../../types/Item";
+import { useBoolean } from "../../hooks/useBoolean";
+import { useLockUnlockItem } from "../../hooks/useLockUnlockItem";
+import ItemFormModal from "../Modal/ItemFormModal";
+import ConfirmationModal from "../Modal/ConfirmationModal";
+import { toastError, toastSuccess } from "../../utils/TostifyUtil";
 import EditIcon from "../../assets/edit";
 import LockIcon from "../../assets/lock";
 import LockOpenIcon from "../../assets/lock-open";
 
-import { Item } from "../../types/Item";
-import { useBoolean } from "../../hooks/useBoolean";
-import { useLockUnlockItem } from "../../hooks/useLockUnlockItem";
-import { toastError, toastSuccess } from "../../utils/TostifyUtil";
-import ConfirmationModal from "../Modal/ConfirmationModal";
-import ItemFormModal from "../Modal/ItemFormModal";
-
-function ProductItem({ item, onReload }: { item: Item; onReload: () => void }) {
+function ItemRow({ item, onReload }: { item: Item; onReload: () => void }) {
   const { isTrue: isOpenConfirmation, onToggle: toggleConfirmation } = useBoolean();
   const { isTrue: isOpenForm, onToggle: toggleForm } = useBoolean();
   const { onLockUnlock } = useLockUnlockItem();
@@ -51,15 +50,12 @@ function ProductItem({ item, onReload }: { item: Item; onReload: () => void }) {
           {item.currentStock}
         </td>
         <td scope="row" className="px-6 py-3">
-          <button
-            onClick={() => toggleForm()}
-            aria-label="edit-item"
-          >
+          <button onClick={() => toggleForm()} aria-label="edit-item">
             <EditIcon width="18" height="18" />
           </button>
         </td>
         <td scope="row" className="px-6 py-3">
-          <button 
+          <button
             onClick={() => toggleConfirmation()}
             aria-label="lock-unlock-item"
           >
@@ -72,7 +68,7 @@ function ProductItem({ item, onReload }: { item: Item; onReload: () => void }) {
         </td>
       </tr>
 
-      <ItemFormModal 
+      <ItemFormModal
         isOpen={isOpenForm}
         onClose={toggleForm}
         onReload={onReload}
@@ -86,7 +82,8 @@ function ProductItem({ item, onReload }: { item: Item; onReload: () => void }) {
         onClose={toggleConfirmation}
       >
         <p>
-          Are you sure you want to <b>{item.blocked ? "unlock" : "lock"}</b> the product <b>"{item.name}"</b>?
+          Are you sure you want to <b>{item.blocked ? "unlock" : "lock"}</b> the
+          product <b>"{item.name}"</b>?
         </p>
         <img src={item.image} alt={item.name} className="h-32 mx-auto" />
       </ConfirmationModal>
@@ -94,4 +91,4 @@ function ProductItem({ item, onReload }: { item: Item; onReload: () => void }) {
   );
 }
 
-export default ProductItem;
+export default ItemRow;

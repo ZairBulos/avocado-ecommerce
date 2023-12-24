@@ -1,7 +1,7 @@
 import { Item } from "../../types/Item";
-import ProductItem from "./ProductItem";
+import ItemRow from "./ItemRow";
 
-function ProductTable({
+function ItemTable({
   items,
   onReload,
 }: {
@@ -32,7 +32,7 @@ function ProductTable({
         </thead>
         <tbody>
           {items.map((item) => (
-            <ProductItem key={item.id} item={item} onReload={onReload} />
+            <ItemRow key={item.id} item={item} onReload={onReload} />
           ))}
         </tbody>
       </table>
@@ -40,4 +40,4 @@ function ProductTable({
   );
 }
 
-export default ProductTable;
+export default ItemTable;

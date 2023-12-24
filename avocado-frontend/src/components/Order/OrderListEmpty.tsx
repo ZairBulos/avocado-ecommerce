@@ -1,4 +1,4 @@
-function OrderTableEmpty() {
+function OrderListEmpty() {
   return (
     <div className="p-4 bg-red-50 border border-red-300 rounded-md">
       <h1 className="text-xl font-semibold text-red-600">No Orders Yet</h1>
@@ -9,4 +9,4 @@ function OrderTableEmpty() {
   );
 }
 
-export default OrderTableEmpty;
+export default OrderListEmpty;

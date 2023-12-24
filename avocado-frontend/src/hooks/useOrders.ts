@@ -18,11 +18,16 @@ export const useOrders = () => {
     try {
       setLoading(true);
 
-      const userId = user?.id || 0;
       const token = getItemFromLS("token") || "";
 
-      const newOrders = await OrderService.findAllByUser(userId, token);
-      setOrders(newOrders);
+      if (user && user.role === "CLIENT") {
+        const { id } = user;
+        const newOrders = await OrderService.findAllByUser(id, token);
+        setOrders(newOrders);
+      } else {
+        const newOrders = await OrderService.findAll(token);
+        setOrders(newOrders);
+      }
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {

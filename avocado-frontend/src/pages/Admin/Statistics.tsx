@@ -1,7 +1,7 @@
-import Loader from "../components/Loader/Loader";
-import ItemStatistics from "../components/Statistics/ItemStatistics";
-import UserStatistics from "../components/Statistics/UserStatistics";
-import { useStatistics } from "../hooks/useStatistics";
+import Loader from "../../components/Loader/Loader";
+import ItemStatistics from "../../components/Statistics/ItemStatistics";
+import UserStatistics from "../../components/Statistics/UserStatistics";
+import { useStatistics } from "../../hooks/useStatistics";
 
 function Statistics() {
   const { registeredUsers, usersRanking, itemsRanking, loading } = useStatistics();

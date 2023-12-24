@@ -1,11 +1,12 @@
 import { useState } from "react";
 
 import Sidebar from "../Sidebar/Sidebar";
-import Products from "../../pages/Products";
-import Statistics from "../../pages/Statistics";
+import Items from "../../pages/Admin/Items";
+import Orders from "../../pages/Admin/Orders";
+import Statistics from "../../pages/Admin/Statistics";
 
 function Dashboard() {
-  const [currentComponent, setCurrentComponent] = useState<string>("Products");
+  const [currentComponent, setCurrentComponent] = useState<string>("Orders");
 
   const handleChangeComponent = (component: string) => {
     setCurrentComponent(component);
@@ -16,8 +17,9 @@ function Dashboard() {
       <Sidebar onChangeComponent={handleChangeComponent} />
 
       <div className="mx-auto">
-        {currentComponent === 'Products' && <Products />}
-        {currentComponent === 'Statistics' && <Statistics />}
+        {currentComponent === "Orders" && <Orders />}
+        {currentComponent === "Products" && <Items />}
+        {currentComponent === "Statistics" && <Statistics />}
       </div>
     </div>
   );

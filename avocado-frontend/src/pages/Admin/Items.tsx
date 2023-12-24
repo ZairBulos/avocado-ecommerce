@@ -1,11 +1,11 @@
-import Loader from "../components/Loader/Loader";
-import ProductTable from "../components/Item/ProductTable";
-import ItemFormModal from "../components/Modal/ItemFormModal";
-import { useProducts } from "../hooks/useProducts";
-import { useBoolean } from "../hooks/useBoolean";
-import PlusIcon from "../assets/plus";
+import Loader from "../../components/Loader/Loader";
+import { useProducts } from "../../hooks/useProducts";
+import ItemTable from "../../components/Item/ItemTable";
+import ItemFormModal from "../../components/Modal/ItemFormModal";
+import { useBoolean } from "../../hooks/useBoolean";
+import PlusIcon from "../../assets/plus";
 
-function Products() {
+function Items() {
   const { items, loading, onReload } = useProducts();
   const { isTrue: isOpenForm, onToggle: toggleForm } = useBoolean();
 
@@ -27,7 +27,7 @@ function Products() {
               </button>
             </div>
 
-            <ProductTable items={items} onReload={onReload} />
+            <ItemTable items={items} onReload={onReload} />
           </section>
 
           <ItemFormModal
@@ -41,4 +41,4 @@ function Products() {
   );
 }
 
-export default Products;
+export default Items;

@@ -14,6 +14,15 @@ function Sidebar({
 
       <nav>
         <ul className="space-y-2 p-4">
+        <li>
+            <button
+              onClick={() => onChangeComponent("Orders")}
+              className="flex items-center space-x-2 pb-2 hover:text-[#132a13]"
+            >
+              <StoreIcon width="20" height="20" />
+              <span>Orders</span>
+            </button>
+          </li>
           <li>
             <button
               onClick={() => onChangeComponent("Products")}
