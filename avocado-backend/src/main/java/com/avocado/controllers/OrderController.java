@@ -18,7 +18,7 @@ public class OrderController {
     private OrderService service;
 
     @GetMapping("")
-    @PreAuthorize("hasAuthority('CLIENT')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<?> getAll() {
         try {
             return ResponseEntity.status(HttpStatus.OK)
